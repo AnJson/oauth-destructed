@@ -7,6 +7,14 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Gitlab",
+        policy =>
+        {
+            policy.WithOrigins("https://gitlab.lnu.se");
+        });
+});
 // TODO: Add authentication.
 
 var app = builder.Build();
@@ -17,6 +25,7 @@ if (builder.Environment.IsDevelopment())
 } // TODO: Add else-block with exceptionhandling middleware.
 
 app.UseHttpsRedirection();
+app.UseCors();
 app.UseStaticFiles();
 app.MapControllers();
 
