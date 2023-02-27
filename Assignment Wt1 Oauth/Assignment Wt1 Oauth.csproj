@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Assignment_Wt1_Oauth</RootNamespace>
+    <UserSecretsId>2fb96bac-1495-4b7c-bdb8-9eb3820340af</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
