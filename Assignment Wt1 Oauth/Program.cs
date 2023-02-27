@@ -10,8 +10,21 @@ builder.Services
 
 builder.Services.AddControllersWithViews();
 
-
 var app = builder.Build();
+
+builder.Services.AddAuthentication("cookie")
+    .AddCookie("cookie")
+    .AddOAuth("gitlab", options =>
+    {
+        options.SignInScheme = "cookie";
+        options.ClientId = app.Configuration.GetValue<string>("Oauthconfig:AppId");
+        options.ClientSecret = app.Configuration.GetValue<string>("Oauthconfig:AppSecret");
+        options.SaveTokens = false;
+
+        options.AuthorizationEndpoint = app.Configuration.GetValue<string>("Oauthconfig:AuthorizationUri");
+        options.TokenEndpoint = app.Configuration.GetValue<string>("Oauthconfig:TokenUri");
+        options.CallbackPath = app.Configuration.GetValue<string>("Oauthconfig:RedirectUri");
+    });
 
 if (builder.Environment.IsDevelopment())
 {
