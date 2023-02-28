@@ -20,9 +20,17 @@ namespace Assignment_Wt1_Oauth.Controllers
         }
 
         [Route("/Error")]
-        public IActionResult Error()
+        public IActionResult Error([FromQuery] string? statusCode)
         {
-            ViewBag.statusCode = _errorService.getErrorStatusCode();
+            // NOTE: Fix this!
+            if (statusCode == null)
+            {
+                ViewBag.statusCode = _errorService.getErrorStatusCode();
+            } else
+            {
+                ViewBag.statusCode = statusCode;
+            }
+
             return View(ViewBag);
         }
     }

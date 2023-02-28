@@ -24,13 +24,10 @@ namespace Assignment_Wt1_Oauth.Controllers
         {
             if (code == null)
             {
-                ViewBag.code = "No code in querystring";
-            } else
-            {
-                ViewBag.code = code;
+                return BadRequest(400);
             }
 
-
+            ViewBag.code = code;
             return View(ViewBag);
         }
     }

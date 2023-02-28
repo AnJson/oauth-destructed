@@ -22,10 +22,12 @@ if (builder.Environment.IsDevelopment())
 } else
 {
     app.UseExceptionHandler("/Error");
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseCors();
+app.UseStatusCodePagesWithReExecute("/Error", "?statusCode={0}"); //NOTE: Not working???
 app.UseStaticFiles();
 app.MapControllers();
 
