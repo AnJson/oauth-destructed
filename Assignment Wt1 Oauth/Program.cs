@@ -5,7 +5,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddScoped<IUserService, UserService>()
-    .AddScoped<IAuthService, AuthService>();
+    .AddScoped<IAuthService, AuthService>()
+    .AddScoped<IErrorService, ErrorService>();
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllersWithViews();
 
@@ -16,7 +19,10 @@ var app = builder.Build();
 if (builder.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-} // TODO: Add else-block with exceptionhandling middleware.
+} else
+{
+    app.UseExceptionHandler("/Error");
+}
 
 app.UseHttpsRedirection();
 app.UseCors();

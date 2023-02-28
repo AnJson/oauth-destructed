@@ -22,13 +22,14 @@ namespace Assignment_Wt1_Oauth.Controllers
         [Route("/session")]
         public IActionResult Session([FromQuery] string? code)
         {
-            // TODO: Fix this problem from gitlab.
             if (code == null)
             {
-                ViewBag.code = "No code in querytring";
+                ViewBag.code = "No code in querystring";
+            } else
+            {
+                ViewBag.code = code;
             }
 
-            ViewBag.code = code;
 
             return View(ViewBag);
         }

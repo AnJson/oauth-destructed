@@ -1,0 +1,23 @@
+﻿@{
+    string GetErrorMessage(int statusCode)
+    {
+        switch (statusCode)
+        {
+            case 400:
+                return "Bad request.";
+            case 401:
+                return "Unauthorized.";
+            case 403:
+                return "Forbidden.";
+            case 404:
+                return "Page not found.";
+            case 500:
+                return "Internal server error.";
+            default:
+                return "An error occurred.";
+        }
+    }
+}
+
+<h1>@ViewBag.StatusCode</h1>
+<h1>@GetErrorMessage(ViewBag.StatusCode)</h1>
