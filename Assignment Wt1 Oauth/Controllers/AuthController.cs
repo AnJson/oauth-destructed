@@ -1,36 +1,34 @@
-﻿using Assignment_Wt1_Oauth.Models.Options;
-using Microsoft.AspNetCore.Cors;
+﻿using Assignment_Wt1_Oauth.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Assignment_Wt1_Oauth.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly IConfiguration _configuration;
+        private readonly IAuthService _authService;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IAuthService authService)
         {
-            _configuration = configuration;
+            _authService = authService;
         }
 
         [Route("/login")]
         public IActionResult Login()
         {
-            OauthAuthorizationOptions authorizationUriWithOptions = _configuration.GetSection("Oauthconfig").Get<OauthAuthorizationOptions>();
-            return Redirect(authorizationUriWithOptions.ToString());
+            string authorizationUriWithOptions = _authService.GetOauthAuthorizationUri();
+            return Redirect(authorizationUriWithOptions);
         }
 
-        [EnableCors("Gitlab")]
         [Route("/session")]
-        public IActionResult Session()
+        public IActionResult Session([FromQuery] string? code)
         {
             // TODO: Fix this problem from gitlab.
-            if (!HttpContext.Request.Query.ContainsKey("code")) // Always contains code???
+            if (code == null)
             {
                 ViewBag.code = "No code in querytring";
             }
 
-            ViewBag.code = HttpContext.Request.Query["code"];
+            ViewBag.code = code;
 
             return View(ViewBag);
         }

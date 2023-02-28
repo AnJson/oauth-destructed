@@ -3,18 +3,12 @@ using Assignment_Wt1_Oauth.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services
+    .AddScoped<IUserService, UserService>()
+    .AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("Gitlab",
-        policy =>
-        {
-            policy.WithOrigins("https://gitlab.lnu.se");
-        });
-});
 // TODO: Add authentication.
 
 var app = builder.Build();
