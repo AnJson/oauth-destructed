@@ -1,5 +1,7 @@
 ﻿using Assignment_Wt1_Oauth.Contracts;
 using Assignment_Wt1_Oauth.Models.Options;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Assignment_Wt1_Oauth.Services
 {
@@ -14,7 +16,28 @@ namespace Assignment_Wt1_Oauth.Services
 
         public string GetOauthAuthorizationUri()
         {
-            return _configuration.GetSection("Oauthconfig").Get<OauthAuthorizationOptions>().ToString();
+            OauthAuthRequest authOptions = _configuration.GetSection("Oauthconfig").Get<OauthAuthRequest>();
+            authOptions.State = getState();
+            authOptions.CodeChallenge = getCodeChallenge();
+            return authOptions.ToString();
+        }
+
+        public OauthTokenResponse GetOauthToken(string code)
+        {
+            throw new NotImplementedException();
+        }
+
+        private string getCodeChallenge()
+        {
+            string code_verifier = Convert.ToBase64String(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString())).Replace("=", "").Replace("+", "-").Replace("/", "_");
+            byte[] sha256Bytes = SHA256.HashData(Encoding.UTF8.GetBytes(code_verifier));
+            string base64String = Convert.ToBase64String(sha256Bytes);
+            return base64String.Replace('+', '-').Replace('/', '_').TrimEnd('=');
+        }
+
+        private string getState()
+        {
+            return Guid.NewGuid().ToString();
         }
     }
 }
