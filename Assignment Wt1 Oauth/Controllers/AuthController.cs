@@ -18,17 +18,17 @@ namespace Assignment_Wt1_Oauth.Controllers
         public IActionResult Login()
         {
             OauthAuthRequest authRequestObject = _authService.GetOauthAuthorizationUri();
-            HttpContext.Session.SetString("code", authRequestObject.State);
+            HttpContext.Session.SetString("state", authRequestObject.State);
             return Redirect(authRequestObject.ToString());
         }
 
         [Route("/session")]
         [TypeFilter(typeof(OauthCallbackActionFilter))]
-        public IActionResult Session([FromQuery] string code)
+        public IActionResult Session([FromQuery] string code, [FromQuery] string state)
         {
             try
             {
-                OauthTokenResponse? tokenResponse = _authService.GetOauthToken(code);
+                // OauthTokenResponse? tokenResponse = _authService.GetOauthToken(code);
                                                                             // Check what type of response if code is not correct!
                 ViewBag.code = code;
                 return View(ViewBag);

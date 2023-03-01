@@ -12,27 +12,25 @@ namespace Assignment_Wt1_Oauth.Filters
                 if (!context.ActionArguments.ContainsKey("code"))
                 {
                     context.Result = authController.BadRequest();
-                }
-
-                if (!context.ActionArguments.ContainsKey("state"))
+                } else if (!context.ActionArguments.ContainsKey("state"))
+                {
+                    context.Result = authController.BadRequest();
+                } else if (string.IsNullOrEmpty(Convert.ToString(!context.ActionArguments.ContainsKey("code"))))
                 {
                     context.Result = authController.BadRequest();
                 }
 
-                if (string.IsNullOrEmpty(Convert.ToString(!context.ActionArguments.ContainsKey("code"))))
-                {
-                    context.Result = authController.BadRequest();
-                }
-
-                string state = Convert.ToString(!context.ActionArguments.ContainsKey("state"));
+                string state = Convert.ToString(context.ActionArguments["state"]);
 
                 if (state != context.HttpContext.Session.GetString("state"))
                 {
                     context.HttpContext.Session.Clear();
                     context.Result = authController.Redirect("/");
+                } else
+                {
+                    await next();
                 }
 
-                await next();
             } else
             {
                 await next();
