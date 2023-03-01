@@ -9,10 +9,9 @@ namespace Assignment_Wt1_Oauth.Filters
         {
             if (context.Controller is AuthController authController)
             {
-                // TODO: FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 if (!isArgumentInActionArguments("code", context) ||
-                    !isArgumentInActionArguments("state", context) ||
                     isArgumentNullOrEmpty("code", context) ||
+                    !isArgumentInActionArguments("state", context) ||
                     isArgumentNullOrEmpty("state", context))
                 {
                     context.Result = authController.BadRequest();
@@ -20,15 +19,6 @@ namespace Assignment_Wt1_Oauth.Filters
                 {
                     await next();
                 }
-                /* // TODO Move to service!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                string state = Convert.ToString(context.ActionArguments["state"]);
-
-                if (state != context.HttpContext.Session.GetString("state"))
-                {
-                    context.HttpContext.Session.Clear();
-                    context.Result = authController.Redirect("/");
-                }
-                */
             } else
             {
                 await next();

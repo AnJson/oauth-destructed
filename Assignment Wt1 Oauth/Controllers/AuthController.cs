@@ -17,8 +17,13 @@ namespace Assignment_Wt1_Oauth.Controllers
         [Route("/login")]
         public IActionResult Login()
         {
-            OauthAuthRequest authRequestObject = _authService.GetOauthAuthorizationUri();
-            HttpContext.Session.SetString("state", authRequestObject.State);
+            string code_verifier = _authService.GetRandomBase64String();
+            _authService.SaveInSession("code_verifier", code_verifier);
+            string state = _authService.GetRandomBase64String();
+            _authService.SaveInSession("state", state);
+
+            OauthAuthRequest authRequestObject = _authService.GetOauthAuthorizationUri(code_verifier);
+            authRequestObject.State = state;
             return Redirect(authRequestObject.ToString());
         }
 
@@ -26,14 +31,14 @@ namespace Assignment_Wt1_Oauth.Controllers
         /// Callback-route specified in gitlab oauth with filter to verfy that arguments are supplied.
         /// If arguments is not supplied a BadRequest-result is sent to the client.
         /// </summary>
-        /// <param name="code">Code expected from gitlabs request, used in filter to verify that code is provided.</param>
-        /// <param name="state">State expected from gitlabs request, used in filter to verify that state is provided.</param>
+        /// <param name="code">Expected from gitlabs request, used in filter to verify that code is provided.</param>
+        /// <param name="state">Expected from gitlabs request, used in filter to verify that state is provided and csrf-verification.</param>
         /// <returns></returns>
         [Route("/session")]
         [TypeFilter(typeof(VerifyCallbackQueryParametersActionFilter))]
+        [TypeFilter(typeof(OauthCsrfActionFilter))]
         public IActionResult Session([FromQuery] string code, [FromQuery] string state)
         {
-            // TODO: Move csrf-protection to service and call it here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             try
             {
                 // OauthTokenResponse? tokenResponse = _authService.GetOauthToken(code);

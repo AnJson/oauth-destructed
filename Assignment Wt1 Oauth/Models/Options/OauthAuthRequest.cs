@@ -6,8 +6,9 @@
         public string? RedirectUri { get; set; }
         public string? RequestedScopes { get; set; }
         public string? AuthorizationUri { get; set; }
-        public string? State { get; set; }
         public string? CodeChallenge { get; set; }
+        public string? State { get; set; }
+
 
         public override string ToString()
         {

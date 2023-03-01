@@ -8,17 +8,20 @@ namespace Assignment_Wt1_Oauth.Services
     public class AuthService : IAuthService
     {
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(IConfiguration configuration)
+
+        public AuthService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
+
         }
 
-        public OauthAuthRequest GetOauthAuthorizationUri()
+        public OauthAuthRequest GetOauthAuthorizationUri(string code_verifier)
         {
             OauthAuthRequest authOptions = _configuration.GetSection("Oauthconfig").Get<OauthAuthRequest>();
-            authOptions.State = getState();
-            authOptions.CodeChallenge = getCodeChallenge();
+            authOptions.CodeChallenge = GetCodeChallenge(code_verifier);
             return authOptions;
         }
 
@@ -27,17 +30,21 @@ namespace Assignment_Wt1_Oauth.Services
             throw new NotImplementedException();
         }
 
-        private string getCodeChallenge()
+        public string GetCodeChallenge(string text)
         {
-            string code_verifier = Convert.ToBase64String(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString())).Replace("=", "").Replace("+", "-").Replace("/", "_");
-            byte[] sha256Bytes = SHA256.HashData(Encoding.UTF8.GetBytes(code_verifier));
+            byte[] sha256Bytes = SHA256.HashData(Encoding.UTF8.GetBytes(text));
             string base64String = Convert.ToBase64String(sha256Bytes);
             return base64String.Replace('+', '-').Replace('/', '_').TrimEnd('=');
         }
 
-        private string getState()
+        public string GetRandomBase64String()
         {
-            return Guid.NewGuid().ToString();
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString())).Replace("=", "").Replace("+", "-").Replace("/", "_");
+        }
+
+        public void SaveInSession(string key, string code_verifier)
+        {
+            _httpContextAccessor.HttpContext.Session.SetString(key, code_verifier);
         }
     }
 }
