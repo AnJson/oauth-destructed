@@ -1,4 +1,5 @@
 ﻿using Assignment_Wt1_Oauth.Contracts;
+using Assignment_Wt1_Oauth.Filters;
 using Assignment_Wt1_Oauth.Models.Options;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,18 +17,15 @@ namespace Assignment_Wt1_Oauth.Controllers
         [Route("/login")]
         public IActionResult Login()
         {
-            string authorizationUriWithOptions = _authService.GetOauthAuthorizationUri();
-            return Redirect(authorizationUriWithOptions);
+            OauthAuthRequest authRequestObject = _authService.GetOauthAuthorizationUri();
+            HttpContext.Session.SetString("code", authRequestObject.State);
+            return Redirect(authRequestObject.ToString());
         }
 
         [Route("/session")]
-        public IActionResult Session([FromQuery] string? code)
+        [TypeFilter(typeof(OauthCallbackActionFilter))]
+        public IActionResult Session([FromQuery] string code)
         {
-            if (code == null)
-            {
-                return BadRequest();
-            }
-
             try
             {
                 OauthTokenResponse? tokenResponse = _authService.GetOauthToken(code);

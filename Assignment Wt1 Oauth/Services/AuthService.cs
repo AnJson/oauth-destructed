@@ -14,12 +14,12 @@ namespace Assignment_Wt1_Oauth.Services
             _configuration = configuration;
         }
 
-        public string GetOauthAuthorizationUri()
+        public OauthAuthRequest GetOauthAuthorizationUri()
         {
             OauthAuthRequest authOptions = _configuration.GetSection("Oauthconfig").Get<OauthAuthRequest>();
             authOptions.State = getState();
             authOptions.CodeChallenge = getCodeChallenge();
-            return authOptions.ToString();
+            return authOptions;
         }
 
         public OauthTokenResponse GetOauthToken(string code)

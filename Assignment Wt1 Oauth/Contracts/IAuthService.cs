@@ -4,7 +4,7 @@ namespace Assignment_Wt1_Oauth.Contracts
 {
     public interface IAuthService
     {
-        public string GetOauthAuthorizationUri();
+        public OauthAuthRequest GetOauthAuthorizationUri();
         public OauthTokenResponse GetOauthToken(string code);
     }
 }

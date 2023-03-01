@@ -8,6 +8,14 @@ builder.Services
     .AddScoped<IAuthService, AuthService>()
     .AddScoped<IErrorService, ErrorService>();
 
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllersWithViews();
@@ -26,8 +34,8 @@ if (builder.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors();
-app.UseStatusCodePagesWithReExecute("/Error", "?statusCode={0}"); //NOTE: Not working???
+app.UseStatusCodePagesWithReExecute("/Error", "?statusCode={0}");
+app.UseSession();
 app.UseStaticFiles();
 app.MapControllers();
 
