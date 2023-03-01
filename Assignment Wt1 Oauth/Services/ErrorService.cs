@@ -1,5 +1,4 @@
 ﻿using Assignment_Wt1_Oauth.Contracts;
-using Microsoft.AspNetCore.Diagnostics;
 
 namespace Assignment_Wt1_Oauth.Services
 {

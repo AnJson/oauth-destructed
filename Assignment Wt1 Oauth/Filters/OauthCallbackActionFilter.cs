@@ -9,33 +9,40 @@ namespace Assignment_Wt1_Oauth.Filters
         {
             if (context.Controller is AuthController authController)
             {
-                if (!context.ActionArguments.ContainsKey("code"))
+                // TODO: FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                if (!isArgumentInActionArguments("code", context) ||
+                    !isArgumentInActionArguments("state", context) ||
+                    !isArgumentNullOrEmpty("code", context) ||
+                    !isArgumentNullOrEmpty("state", context))
                 {
                     context.Result = authController.BadRequest();
-                } else if (!context.ActionArguments.ContainsKey("state"))
+                } else
                 {
-                    context.Result = authController.BadRequest();
-                } else if (string.IsNullOrEmpty(Convert.ToString(!context.ActionArguments.ContainsKey("code"))))
-                {
-                    context.Result = authController.BadRequest();
+                    await next();
                 }
-
+                /* // TODO Move to service!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 string state = Convert.ToString(context.ActionArguments["state"]);
 
                 if (state != context.HttpContext.Session.GetString("state"))
                 {
                     context.HttpContext.Session.Clear();
                     context.Result = authController.Redirect("/");
-                } else
-                {
-                    await next();
                 }
-
+                */
             } else
             {
                 await next();
             }
+        }
 
+        private Boolean isArgumentNullOrEmpty(string argument, ActionExecutingContext context)
+        {
+            return string.IsNullOrEmpty(Convert.ToString(!context.ActionArguments.ContainsKey(argument)));
+        }
+
+        private Boolean isArgumentInActionArguments(string argument, ActionExecutingContext context)
+        {
+            return context.ActionArguments.ContainsKey(argument);
         }
     }
 }

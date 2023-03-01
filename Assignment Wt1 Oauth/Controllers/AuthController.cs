@@ -23,15 +23,17 @@ namespace Assignment_Wt1_Oauth.Controllers
         }
 
         /// <summary>
-        /// Callback-route specified in gitlab oauth with csrf-protection filter.
+        /// Callback-route specified in gitlab oauth with filter to verfy that arguments are supplied.
+        /// If arguments is not supplied a BadRequest-result is sent to the client.
         /// </summary>
         /// <param name="code">Code expected from gitlabs request, used in filter to verify that code is provided.</param>
-        /// <param name="state">State expected from gitlabs request, used in filter as csrf-validation.</param>
+        /// <param name="state">State expected from gitlabs request, used in filter to verify that state is provided.</param>
         /// <returns></returns>
         [Route("/session")]
         [TypeFilter(typeof(OauthCallbackActionFilter))]
         public IActionResult Session([FromQuery] string code, [FromQuery] string state)
         {
+            // TODO: Move csrf-protection to service and call it here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             try
             {
                 // OauthTokenResponse? tokenResponse = _authService.GetOauthToken(code);
