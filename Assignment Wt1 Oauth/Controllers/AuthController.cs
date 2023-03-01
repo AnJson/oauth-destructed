@@ -22,6 +22,12 @@ namespace Assignment_Wt1_Oauth.Controllers
             return Redirect(authRequestObject.ToString());
         }
 
+        /// <summary>
+        /// Callback-route specified in gitlab oauth with csrf-protection filter.
+        /// </summary>
+        /// <param name="code">Code expected from gitlabs request, used in filter to verify that code is provided.</param>
+        /// <param name="state">State expected from gitlabs request, used in filter as csrf-validation.</param>
+        /// <returns></returns>
         [Route("/session")]
         [TypeFilter(typeof(OauthCallbackActionFilter))]
         public IActionResult Session([FromQuery] string code, [FromQuery] string state)
