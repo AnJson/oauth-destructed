@@ -30,7 +30,7 @@ namespace Assignment_Wt1_Oauth.Controllers
         /// <param name="state">State expected from gitlabs request, used in filter to verify that state is provided.</param>
         /// <returns></returns>
         [Route("/session")]
-        [TypeFilter(typeof(OauthCallbackActionFilter))]
+        [TypeFilter(typeof(VerifyCallbackQueryParametersActionFilter))]
         public IActionResult Session([FromQuery] string code, [FromQuery] string state)
         {
             // TODO: Move csrf-protection to service and call it here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

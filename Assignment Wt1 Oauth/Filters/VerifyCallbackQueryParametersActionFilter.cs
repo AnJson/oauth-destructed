@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Assignment_Wt1_Oauth.Filters
 {
-    public class OauthCallbackActionFilter : IAsyncActionFilter
+    public class VerifyCallbackQueryParametersActionFilter : IAsyncActionFilter
     {
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
@@ -12,8 +12,8 @@ namespace Assignment_Wt1_Oauth.Filters
                 // TODO: FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 if (!isArgumentInActionArguments("code", context) ||
                     !isArgumentInActionArguments("state", context) ||
-                    !isArgumentNullOrEmpty("code", context) ||
-                    !isArgumentNullOrEmpty("state", context))
+                    isArgumentNullOrEmpty("code", context) ||
+                    isArgumentNullOrEmpty("state", context))
                 {
                     context.Result = authController.BadRequest();
                 } else
@@ -37,7 +37,7 @@ namespace Assignment_Wt1_Oauth.Filters
 
         private Boolean isArgumentNullOrEmpty(string argument, ActionExecutingContext context)
         {
-            return string.IsNullOrEmpty(Convert.ToString(!context.ActionArguments.ContainsKey(argument)));
+            return string.IsNullOrEmpty(Convert.ToString(context.ActionArguments[argument]));
         }
 
         private Boolean isArgumentInActionArguments(string argument, ActionExecutingContext context)
