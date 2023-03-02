@@ -30,10 +30,11 @@ namespace Assignment_Wt1_Oauth.Controllers
         /// <summary>
         /// Callback-route specified in gitlab oauth with filter to verfy that arguments are supplied.
         /// If arguments is not supplied a BadRequest-result is sent to the client.
+        /// Saving tokens in session storage when successfully required.
         /// </summary>
         /// <param name="code">Expected from gitlabs request, used in filter to verify that code is provided.</param>
         /// <param name="state">Expected from gitlabs request, used in filter to verify that state is provided and csrf-verification.</param>
-        /// <returns></returns>
+        /// <returns>Redirect to "/user"</returns>
         [Route("/session")]
         [TypeFilter(typeof(VerifyCallbackQueryParametersActionFilter))]
         [TypeFilter(typeof(OauthCsrfActionFilter))]
