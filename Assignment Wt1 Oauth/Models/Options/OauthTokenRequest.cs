@@ -2,11 +2,12 @@
 {
     public class OauthTokenRequest
     {
+        public string? client_id { get; set; }
+        public string? code { get; set; }
+        public string? grant_type { get; set; }
+        public string? redirect_uri { get; set; }
+        public string? code_verifier { get; set; }
+        public string? client_secret { get; set; }
+
     }
 }
-
-// client_id=APP_ID
-// code=RETURNED_CODE
-// grant_type=authorization_code
-// redirect_uri=REDIRECT_URI
-// code_verifier=CODE_VERIFIER'

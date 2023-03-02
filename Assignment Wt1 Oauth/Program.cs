@@ -4,6 +4,7 @@ using Assignment_Wt1_Oauth.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
+    .AddSingleton<HttpClient>()
     .AddScoped<IUserService, UserService>()
     .AddScoped<IAuthService, AuthService>()
     .AddScoped<IErrorService, ErrorService>();

@@ -19,6 +19,7 @@ namespace Assignment_Wt1_Oauth.Controllers
         {
             string code_verifier = _authService.GetRandomBase64String();
             _authService.SaveInSession("code_verifier", code_verifier);
+            Console.WriteLine($"Saved code_verifier: {code_verifier}");
             string state = _authService.GetRandomBase64String();
             _authService.SaveInSession("state", state);
 
@@ -37,12 +38,13 @@ namespace Assignment_Wt1_Oauth.Controllers
         [Route("/session")]
         [TypeFilter(typeof(VerifyCallbackQueryParametersActionFilter))]
         [TypeFilter(typeof(OauthCsrfActionFilter))]
-        public IActionResult Session([FromQuery] string code, [FromQuery] string state)
+        public async Task<IActionResult> Session([FromQuery] string code, [FromQuery] string state)
         {
             try
             {
-                // OauthTokenResponse? tokenResponse = _authService.GetOauthToken(code);
-                                                                            // Check what type of response if code is not correct!
+                OauthTokenResponse? tokenResponse = await _authService.GetOauthToken(code);
+                // TODO: Sign user in!
+
                 ViewBag.code = code;
                 return View(ViewBag);
             } catch (Exception e)
