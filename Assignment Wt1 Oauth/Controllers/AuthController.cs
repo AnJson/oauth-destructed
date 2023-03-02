@@ -19,7 +19,6 @@ namespace Assignment_Wt1_Oauth.Controllers
         {
             string code_verifier = _authService.GetRandomBase64String();
             _authService.SaveInSession("code_verifier", code_verifier);
-            Console.WriteLine($"Saved code_verifier: {code_verifier}");
             string state = _authService.GetRandomBase64String();
             _authService.SaveInSession("state", state);
 
@@ -43,10 +42,10 @@ namespace Assignment_Wt1_Oauth.Controllers
             try
             {
                 OauthTokenResponse? tokenResponse = await _authService.GetOauthToken(code);
-                // TODO: Sign user in!
+                _authService.SaveInSession("access_token", tokenResponse.access_token);
+                _authService.SaveInSession("refresh_token", tokenResponse.refresh_token);
 
-                ViewBag.code = code;
-                return View(ViewBag);
+                return Redirect("/user");
             } catch (Exception e)
             {
                 Console.WriteLine("An exception occurred: {0}", e.Message);

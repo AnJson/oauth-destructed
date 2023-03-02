@@ -4,20 +4,20 @@ namespace Assignment_Wt1_Oauth.Controllers
 {
     public class UserController : Controller
     {
-        [Route("[controller]/{id}")]
+        [Route("[controller]")]
         public IActionResult Index(string id)
         {
             ViewBag.userid = id;
             return View(ViewBag);
         }
 
-        [Route("[controller]/{id}/activities")]
+        [Route("[controller]/activities")]
         public IActionResult Activities(string id)
         {
             return View();
         }
 
-        [Route("[controller]/{id}/groups")]
+        [Route("[controller]/groups")]
         public IActionResult Groups(string id)
         {
             return View();
