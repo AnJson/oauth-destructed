@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Assignment_Wt1_Oauth.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         [Route("[controller]")]

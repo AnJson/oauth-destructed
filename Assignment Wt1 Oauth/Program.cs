@@ -12,23 +12,24 @@ var builder = WebApplication.CreateBuilder(args);
         .AddScoped<IErrorService, ErrorService>();
 
     builder.Services.AddDistributedMemoryCache();
+    builder.Services.AddHttpContextAccessor();
 
     builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddCookie(options =>
         {
             options.LoginPath = "/";
-            options.AccessDeniedPath = "/";
+            options.AccessDeniedPath = "/access-denied";
             options.Cookie.Name = "wt1_1dv027";
             options.Cookie.HttpOnly = true;
             options.Cookie.IsEssential = true;
         });
 
+    builder.Services.AddAuthorization();
+
     builder.Services.AddSession(options =>
     {
         options.Cookie.Name = "wt1_1dv027";
     });
-
-    builder.Services.AddHttpContextAccessor();
 
     builder.Services.AddControllersWithViews();
 }
@@ -47,6 +48,7 @@ if (builder.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStatusCodePagesWithReExecute("/Error", "?statusCode={0}");
 app.UseAuthentication();
+app.UseAuthorization();
 app.UseSession();
 app.UseStaticFiles();
 app.MapControllers();

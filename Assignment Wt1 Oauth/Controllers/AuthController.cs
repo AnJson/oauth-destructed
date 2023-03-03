@@ -1,10 +1,12 @@
 ﻿using Assignment_Wt1_Oauth.Contracts;
 using Assignment_Wt1_Oauth.Filters;
 using Assignment_Wt1_Oauth.Models.Options;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Assignment_Wt1_Oauth.Controllers
 {
+    [AllowAnonymous]
     public class AuthController : Controller
     {
         private readonly IAuthService _authService;
@@ -17,14 +19,15 @@ namespace Assignment_Wt1_Oauth.Controllers
         [Route("/login")]
         public IActionResult Login()
         {
-            string code_verifier = _authService.GetRandomBase64String();
-            _authService.SaveInSession("code_verifier", code_verifier);
-            string state = _authService.GetRandomBase64String();
-            _authService.SaveInSession("state", state);
-
-            OauthAuthRequest authRequestObject = _authService.GetOauthAuthorizationUri(code_verifier);
-            authRequestObject.State = state;
-            return Redirect(authRequestObject.ToString());
+            try
+            {
+                OauthAuthRequest authRequestObject = _authService.GetOauthAuthorizationUri();
+                return Redirect(authRequestObject.ToString());
+            } catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return StatusCode(500);
+            }
         }
 
         /// <summary>
@@ -43,8 +46,8 @@ namespace Assignment_Wt1_Oauth.Controllers
             try
             {
                 OauthTokenResponse? tokenResponse = await _authService.GetOauthToken(code);
-                _authService.SaveInSession("access_token", tokenResponse.access_token);
-                _authService.SaveInSession("refresh_token", tokenResponse.refresh_token);
+
+                await _authService.SignIn(tokenResponse);
 
                 return Redirect("/user");
             } catch (Exception e)
@@ -52,7 +55,12 @@ namespace Assignment_Wt1_Oauth.Controllers
                 Console.WriteLine("An exception occurred: {0}", e.Message);
                 return BadRequest();
             }
+        }
 
+        [Route("/access-denied")]
+        public IActionResult AccessDenied()
+        {
+            return Forbid();
         }
     }
 }
