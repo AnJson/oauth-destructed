@@ -66,13 +66,13 @@ namespace Assignment_Wt1_Oauth.Services
             {
                 SaveInSession("access_token", tokenResponse.access_token);
                 SaveInSession("refresh_token", tokenResponse.refresh_token);
-                
+
                 List<Claim> claims = new List<Claim>
                 {
-                    // TODO: Read from jwt and set the subscriber. (Hopefully solves the SignInAsync identity-problem.
+                    new Claim(ClaimTypes.Name, "Test") // TODO: FIX this!
                 };
                
-                await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(new ClaimsIdentity()));
+                await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(new ClaimsIdentity(claims, "sub")));
             }
         }
 
