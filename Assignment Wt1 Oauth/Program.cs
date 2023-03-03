@@ -18,10 +18,18 @@ var builder = WebApplication.CreateBuilder(args);
         .AddCookie(options =>
         {
             options.LoginPath = "/";
-            options.AccessDeniedPath = "/access-denied";
+            options.AccessDeniedPath = "/denied";
             options.Cookie.Name = "wt1_1dv027";
             options.Cookie.HttpOnly = true;
             options.Cookie.IsEssential = true;
+            options.Events = new CookieAuthenticationEvents()
+            {
+                OnRedirectToLogin = (ctx) =>
+                {
+                    ctx.Response.StatusCode = 403;
+                    return Task.CompletedTask;
+                }
+            };
         });
 
     builder.Services.AddAuthorization();
