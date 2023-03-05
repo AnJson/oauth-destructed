@@ -3,13 +3,15 @@
 
 <div class="container container--column">
     <div class="row row--left">
-        <h2>[avatar]</h2>
+        <div class="avatar-wrapper">
+            <img src="@Model.avatar_url" alt="Profile avatar" />
+        </div>
         <div class="container container--column">
-            <h2>[name]</h2>
-            <h2>[username]</h2>
-            <h2>User-id: @Model.userid</h2>
+            <h2>Name: @Model.name</h2>
+            <h2>Username: @Model.username</h2>
+            <h2>User-id: @Model.id</h2>
             <h2>Email: @Model.email</h2>
-            <h2>[lastactivity]</h2>
+            <h2>Last activity: @Model.last_activity_on</h2>
         </div>
     </div>
 </div>

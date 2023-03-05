@@ -15,8 +15,6 @@ namespace Assignment_Wt1_Oauth.Utils
         {
             ACCESS_TOKEN,
             REFRESH_TOKEN,
-            EMAIL,
-            USERID,
             STATE,
             CODE_VERIFIER
         }
@@ -29,10 +27,6 @@ namespace Assignment_Wt1_Oauth.Utils
                     return "access_token";
                 case SessionStorageKey.REFRESH_TOKEN:
                     return "refresh_token";
-                case SessionStorageKey.EMAIL:
-                    return "email";
-                case SessionStorageKey.USERID:
-                    return "userid";
                 case SessionStorageKey.STATE:
                     return "state";
                 case SessionStorageKey.CODE_VERIFIER:

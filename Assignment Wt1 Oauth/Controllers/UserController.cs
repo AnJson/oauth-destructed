@@ -16,9 +16,9 @@ namespace Assignment_Wt1_Oauth.Controllers
         }
 
         [Route("[controller]")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            UserProfile userProfile = _userService.GetUserProfile();
+            UserProfile? userProfile = await _userService.GetUserProfile();
 
             return View(userProfile);
         }

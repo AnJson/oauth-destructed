@@ -4,6 +4,6 @@ namespace Assignment_Wt1_Oauth.Contracts
 {
     public interface IUserService
     {
-        public UserProfile GetUserProfile();
+        public Task<UserProfile?> GetUserProfile();
     }
 }

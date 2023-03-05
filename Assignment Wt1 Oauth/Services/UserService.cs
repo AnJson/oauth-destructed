@@ -1,6 +1,10 @@
 ﻿using Assignment_Wt1_Oauth.Contracts;
 using Assignment_Wt1_Oauth.Models;
 using Assignment_Wt1_Oauth.Utils;
+using Microsoft.Extensions.Configuration;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace Assignment_Wt1_Oauth.Services
 {
@@ -8,19 +12,36 @@ namespace Assignment_Wt1_Oauth.Services
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly SessionHandler _sessionHandler;
+        private readonly IConfiguration _configuration;
+        private readonly HttpClient _httpClient;
 
-
-        public UserService(IHttpContextAccessor httpContextAccessor, SessionHandler sessionHandler)
+        public UserService(SessionHandler sessionHandler, IConfiguration configuration, HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
         {
-            _httpContextAccessor = httpContextAccessor;
             _sessionHandler = sessionHandler;
+            _configuration = configuration;
+            _httpClient = httpClient;
+            _httpContextAccessor = httpContextAccessor;
         }
-        public UserProfile GetUserProfile()
+        public async Task<UserProfile?> GetUserProfile()
         {
-            UserProfile profile = new UserProfile();
-            profile.userid = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.USERID);
-            profile.email = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.EMAIL);
-            return profile;
+            return await RequestUserProfile();
+        }
+
+        private async Task<UserProfile?> RequestUserProfile()
+        {
+            string accessKey = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.ACCESS_TOKEN);
+            string profileUri = _configuration.GetValue<string>("Oauthconfig:ProfileUri");
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessKey);
+            HttpResponseMessage response = await _httpClient.GetAsync(profileUri);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"User get-request failed with statuscode {response.StatusCode}");
+            }
+
+            string responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<UserProfile>(responseContent);
         }
     }
 }
