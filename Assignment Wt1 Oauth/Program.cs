@@ -1,5 +1,6 @@
 using Assignment_Wt1_Oauth.Contracts;
 using Assignment_Wt1_Oauth.Services;
+using Assignment_Wt1_Oauth.Utils;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
         .AddSingleton<HttpClient>()
         .AddScoped<IUserService, UserService>()
         .AddScoped<IAuthService, AuthService>()
-        .AddScoped<IErrorService, ErrorService>();
+        .AddScoped<IErrorService, ErrorService>()
+        .AddScoped<JwtHandler>()
+        .AddScoped<SessionHandler>();
 
     builder.Services.AddDistributedMemoryCache();
     builder.Services.AddHttpContextAccessor();
@@ -19,7 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
         {
             options.LoginPath = "/";
             options.AccessDeniedPath = "/denied";
-            options.Cookie.Name = "wt1_1dv027";
+            options.Cookie.Name = "wt1_1dv027-auth";
             options.Cookie.HttpOnly = true;
             options.Cookie.IsEssential = true;
             options.Events = new CookieAuthenticationEvents()
@@ -36,7 +39,9 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddSession(options =>
     {
-        options.Cookie.Name = "wt1_1dv027";
+        options.Cookie.Name = "wt1_1dv027-session";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.IsEssential = true;
     });
 
     builder.Services.AddControllersWithViews();

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Assignment_Wt1_Oauth.Contracts;
+using Assignment_Wt1_Oauth.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Assignment_Wt1_Oauth.Controllers
@@ -6,11 +8,19 @@ namespace Assignment_Wt1_Oauth.Controllers
     [Authorize]
     public class UserController : Controller
     {
+        private readonly IUserService _userService;
+
+        public UserController(IUserService userService)
+        { 
+            _userService = userService;
+        }
+
         [Route("[controller]")]
-        public IActionResult Index(string id)
+        public IActionResult Index()
         {
-            ViewBag.userid = id;
-            return View(ViewBag);
+            UserProfile userProfile = _userService.GetUserProfile();
+
+            return View(userProfile);
         }
 
         [Route("[controller]/activities")]

@@ -1,1 +1,15 @@
-﻿<h1>User: @ViewBag.userid</h1>
+﻿@using Assignment_Wt1_Oauth.Models
+@model UserProfile
+
+<div class="container container--column">
+    <div class="row row--left">
+        <h2>[avatar]</h2>
+        <div class="container container--column">
+            <h2>[name]</h2>
+            <h2>[username]</h2>
+            <h2>User-id: @Model.userid</h2>
+            <h2>Email: @Model.email</h2>
+            <h2>[lastactivity]</h2>
+        </div>
+    </div>
+</div>

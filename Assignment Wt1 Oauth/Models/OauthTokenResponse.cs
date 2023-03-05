@@ -1,4 +1,4 @@
-﻿namespace Assignment_Wt1_Oauth.Models.Options
+﻿namespace Assignment_Wt1_Oauth.Models
 {
     public class OauthTokenResponse
     {

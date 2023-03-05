@@ -1,4 +1,4 @@
-﻿using Assignment_Wt1_Oauth.Models.Options;
+﻿using Assignment_Wt1_Oauth.Models;
 
 namespace Assignment_Wt1_Oauth.Contracts
 {

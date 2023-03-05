@@ -1,5 +1,6 @@
 ﻿using Assignment_Wt1_Oauth.Contracts;
-using Assignment_Wt1_Oauth.Models.Options;
+using Assignment_Wt1_Oauth.Models;
+using Assignment_Wt1_Oauth.Utils;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
@@ -14,24 +15,28 @@ namespace Assignment_Wt1_Oauth.Services
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpClient _httpClient;
+        private readonly JwtHandler _jwtHandler;
+        private readonly SessionHandler _sessionHandler;
 
-        public AuthService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor, HttpClient httpClient)
+        public AuthService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor, HttpClient httpClient, JwtHandler jwtHandler, SessionHandler sessionHandler)
         {
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
             _httpClient = httpClient;
+            _jwtHandler = jwtHandler;
+            _sessionHandler = sessionHandler;
         }
 
         public OauthAuthRequest GetOauthAuthorizationUri()
         {
-            string state = _httpContextAccessor.HttpContext.Session.GetString("state");
-            string code_verifyer = _httpContextAccessor.HttpContext.Session.GetString("code_verifier");
+            string state = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.STATE);
+            string code_verifyer = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.CODE_VERIFIER);
 
             if (!string.IsNullOrEmpty(state) && !string.IsNullOrEmpty(code_verifyer))
             {
                 OauthAuthRequest authOptions = _configuration.GetSection("Oauthconfig").Get<OauthAuthRequest>();
-                authOptions.State = _httpContextAccessor.HttpContext.Session.GetString("state");
-                authOptions.CodeChallenge = GetCodeChallenge(_httpContextAccessor.HttpContext.Session.GetString("code_verifier"));
+                authOptions.State = state;
+                authOptions.CodeChallenge = GetCodeChallenge(code_verifyer);
                 return authOptions;
             } else
             {
@@ -47,7 +52,7 @@ namespace Assignment_Wt1_Oauth.Services
             tokenRequestOptions.client_secret = _configuration.GetValue<string>("Oauthconfig:AppSecret");
             tokenRequestOptions.code = code;
             tokenRequestOptions.grant_type = "authorization_code";
-            tokenRequestOptions.code_verifier = _httpContextAccessor.HttpContext.Session.GetString("code_verifier");
+            tokenRequestOptions.code_verifier = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.CODE_VERIFIER);
             OauthTokenResponse response = await getTokenRequest(tokenRequestOptions);
             return response;
         }
@@ -55,21 +60,25 @@ namespace Assignment_Wt1_Oauth.Services
         public void InitAuthRequest()
         {
             string code_verifier = GetRandomBase64String();
-            SaveInSession("code_verifier", code_verifier);
+            _sessionHandler.SaveInSession(SessionHandler.SessionStorageKey.CODE_VERIFIER, code_verifier);
             string state = GetRandomBase64String();
-            SaveInSession("state", state);
+            _sessionHandler.SaveInSession(SessionHandler.SessionStorageKey.STATE, state);
         }
 
         public async Task SignIn(OauthTokenResponse? tokenResponse)
         {
             if (tokenResponse != null)
             {
-                SaveInSession("access_token", tokenResponse.access_token);
-                SaveInSession("refresh_token", tokenResponse.refresh_token);
+                IdTokenData idTokenData = _jwtHandler.GetIdTokenData(tokenResponse.id_token);
+                _sessionHandler.SaveInSession(SessionHandler.SessionStorageKey.ACCESS_TOKEN, tokenResponse.access_token);
+                _sessionHandler.SaveInSession(SessionHandler.SessionStorageKey.REFRESH_TOKEN, tokenResponse.refresh_token);
+                _sessionHandler.SaveInSession(SessionHandler.SessionStorageKey.EMAIL, idTokenData.email);
+                _sessionHandler.SaveInSession(SessionHandler.SessionStorageKey.USERID, idTokenData.sub);
+                // Is groups needed??????????????????????????????????????????????????????????????????????????????????????????????????????????????????
 
                 List<Claim> claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, "Test") // TODO: FIX this!
+                    new Claim(ClaimTypes.Name, idTokenData.sub)
                 };
                
                 await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(new ClaimsIdentity(claims, "sub")));
@@ -86,11 +95,6 @@ namespace Assignment_Wt1_Oauth.Services
         private string GetRandomBase64String()
         {
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString())).Replace("=", "y").Replace("+", "-").Replace("/", "_");
-        }
-
-        private void SaveInSession(string key, string value)
-        {
-            _httpContextAccessor.HttpContext.Session.SetString(key, value);
         }
 
         private async Task<OauthTokenResponse?> getTokenRequest(OauthTokenRequest options)

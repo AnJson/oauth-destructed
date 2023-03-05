@@ -1,6 +1,6 @@
 ﻿using Assignment_Wt1_Oauth.Contracts;
 using Assignment_Wt1_Oauth.Filters;
-using Assignment_Wt1_Oauth.Models.Options;
+using Assignment_Wt1_Oauth.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
