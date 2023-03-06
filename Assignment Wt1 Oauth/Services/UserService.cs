@@ -22,6 +22,12 @@ namespace Assignment_Wt1_Oauth.Services
             _httpClient = httpClient;
             _httpContextAccessor = httpContextAccessor;
         }
+
+        public async Task<GroupCollection> GetGroupCollection()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<UserProfile?> GetUserProfile()
         {
             return await RequestUserProfile();

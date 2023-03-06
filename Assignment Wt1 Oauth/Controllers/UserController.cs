@@ -30,9 +30,10 @@ namespace Assignment_Wt1_Oauth.Controllers
         }
 
         [Route("[controller]/groups")]
-        public IActionResult Groups(string id)
+        public async Task<IActionResult> Groups(string id)
         {
-            return View();
+            GroupCollection groupsViewData = await _userService.GetGroupCollection();
+            return View(groupsViewData);
         }
     }
 }
