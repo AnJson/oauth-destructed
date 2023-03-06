@@ -1,5 +1,6 @@
 ﻿using Assignment_Wt1_Oauth.Contracts;
 using Assignment_Wt1_Oauth.Models;
+using Assignment_Wt1_Oauth.Models.GroupsResponse;
 using Assignment_Wt1_Oauth.Utils;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
@@ -25,10 +26,10 @@ namespace Assignment_Wt1_Oauth.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<GroupCollection> GetGroupCollection()
+        public async Task<GraphQLGroupsResponse?> GetGroupCollection()
         {
-            var graphqlResponse = await RequestGroups();
-            return null;
+            GraphQLGroupsResponse groups = await RequestGroups();
+            return groups;
         }
 
         public async Task<UserProfile?> GetUserProfile()
@@ -53,7 +54,7 @@ namespace Assignment_Wt1_Oauth.Services
             return JsonSerializer.Deserialize<UserProfile>(responseContent);
         }
 
-        private async Task<string?> RequestGroups()
+        private async Task<GraphQLGroupsResponse?> RequestGroups()
         {
             string accessKey = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.ACCESS_TOKEN);
             string graphqlUri = _configuration.GetValue<string>("Oauthconfig:GraphqlUri");
@@ -113,8 +114,8 @@ namespace Assignment_Wt1_Oauth.Services
                 throw new Exception($"Groups graphql request failed with statuscode {response.StatusCode}");
             }
 
-            return await response.Content.ReadAsStringAsync();
-            // return JsonSerializer.Deserialize<UserProfile>(responseContent); // FIX THIS!!!!!!!!!!!!!!!!
+            string responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<GraphQLGroupsResponse>(responseContent);
         }
     }
 }

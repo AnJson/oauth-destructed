@@ -1,4 +1,26 @@
-﻿@using Assignment_Wt1_Oauth.Models
-@model GroupCollection
+﻿@using Assignment_Wt1_Oauth.Models.GroupsResponse
+@model GraphQLGroupsResponse
 
 <h1>Groups</h1>
+<div class="container container--column">
+    <div class="row">
+        <div class="container container--column">
+            @foreach (Node node in Model.data.currentUser.groupMemberships.nodes) {
+                <div class="row row--left">
+                    <div class="avatar-wrapper">
+                    @if (node.group.avatarUrl != null) {
+                        <img src="@node.group.avatarUrl" alt="Profile avatar" />
+                    } else {
+                    <img src="/not-announced.png" alt="Profile avatar" />
+                    }
+                    </div>
+                    <div class="container container--column">
+                        <h2>@node.group.name</h2>
+                        <h3>@node.group.fullPath</h3>
+                        <a href="@node.group.webUrl" target="_blank">@node.group.webUrl</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
