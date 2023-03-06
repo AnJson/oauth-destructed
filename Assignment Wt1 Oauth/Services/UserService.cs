@@ -1,13 +1,12 @@
 ﻿using Assignment_Wt1_Oauth.Contracts;
 using Assignment_Wt1_Oauth.Models;
-using Assignment_Wt1_Oauth.Models.GraphQLGroupsResponse;
 using Assignment_Wt1_Oauth.Utils;
-using GraphQL;
-using GraphQL.Client.Abstractions;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Assignment_Wt1_Oauth.Services
 {
@@ -17,15 +16,13 @@ namespace Assignment_Wt1_Oauth.Services
         private readonly SessionHandler _sessionHandler;
         private readonly IConfiguration _configuration;
         private readonly HttpClient _httpClient;
-        private readonly IGraphQLClient _graphqlClient;
 
-        public UserService(SessionHandler sessionHandler, IConfiguration configuration, IGraphQLClient graphqlClient, HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
+        public UserService(SessionHandler sessionHandler, IConfiguration configuration, HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
         {
             _sessionHandler = sessionHandler;
             _configuration = configuration;
             _httpClient = httpClient;
             _httpContextAccessor = httpContextAccessor;
-            _graphqlClient = graphqlClient;
         }
 
         public async Task<GroupCollection> GetGroupCollection()
@@ -59,11 +56,11 @@ namespace Assignment_Wt1_Oauth.Services
         private async Task<string?> RequestGroups()
         {
             string accessKey = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.ACCESS_TOKEN);
-            // string graphqlUri = _configuration.GetValue<string>("Oauthconfig:GraphqlUri");
+            string graphqlUri = _configuration.GetValue<string>("Oauthconfig:GraphqlUri");
 
-            GraphQLRequest request = new GraphQLRequest
+            var queryObject = new
             {
-                Query = @"query {
+                query = @"query {
                           currentUser {
                             groupMemberships(first: 3) {
                               pageInfo {
@@ -107,18 +104,17 @@ namespace Assignment_Wt1_Oauth.Services
                         }"
             };
 
-            var response = await _graphqlClient.SendQueryAsync(request); // NOT WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            return null;
-            // _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessKey);
-            // HttpResponseMessage response = await _httpClient.PostAsync(graphqlUri); // Add body.
+            var query = new StringContent(JsonSerializer.Serialize(queryObject), Encoding.UTF8, "application/json");
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessKey);
+            HttpResponseMessage response = await _httpClient.PostAsync(graphqlUri, query);
 
-            // if (!response.IsSuccessStatusCode)
-            // {
-            //    throw new Exception($"Groups graphql request failed with statuscode {response.StatusCode}");
-            // }
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Groups graphql request failed with statuscode {response.StatusCode}");
+            }
 
-            // return await response.Content.ReadAsStringAsync();
-            // return JsonSerializer.Deserialize<UserProfile>(responseContent);
+            return await response.Content.ReadAsStringAsync();
+            // return JsonSerializer.Deserialize<UserProfile>(responseContent); // FIX THIS!!!!!!!!!!!!!!!!
         }
     }
 }

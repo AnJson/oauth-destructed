@@ -1,9 +1,6 @@
 using Assignment_Wt1_Oauth.Contracts;
 using Assignment_Wt1_Oauth.Services;
 using Assignment_Wt1_Oauth.Utils;
-using GraphQL.Client.Abstractions;
-using GraphQL.Client.Http;
-using GraphQL.Client.Serializer.Newtonsoft;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,8 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
         .AddScoped<IAuthService, AuthService>()
         .AddScoped<IErrorService, ErrorService>()
         .AddScoped<JwtHandler>()
-        .AddScoped<SessionHandler>()
-        .AddScoped<IGraphQLClient>(s => new GraphQLHttpClient(builder.Configuration["Oauthconfig:GraphqlUri"], new NewtonsoftJsonSerializer()));
+        .AddScoped<SessionHandler>();
 
     builder.Services.AddDistributedMemoryCache();
     builder.Services.AddHttpContextAccessor();
