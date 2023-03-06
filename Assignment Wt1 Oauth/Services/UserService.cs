@@ -13,23 +13,20 @@ namespace Assignment_Wt1_Oauth.Services
 {
     public class UserService : IUserService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly SessionHandler _sessionHandler;
         private readonly IConfiguration _configuration;
         private readonly HttpClient _httpClient;
 
-        public UserService(SessionHandler sessionHandler, IConfiguration configuration, HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
+        public UserService(SessionHandler sessionHandler, IConfiguration configuration, HttpClient httpClient)
         {
             _sessionHandler = sessionHandler;
             _configuration = configuration;
             _httpClient = httpClient;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<GraphQLGroupsResponse?> GetGroupCollection()
         {
-            GraphQLGroupsResponse groups = await RequestGroups();
-            return groups;
+            return await RequestGroups();
         }
 
         public async Task<UserProfile?> GetUserProfile()

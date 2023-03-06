@@ -6,9 +6,74 @@
 body {
 }
 
+h1,
+h2,
+h3,
+h4,
+h5 {
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    padding: 0 0 4rem;
+}
+
+h2 {
+    font-size: 2.2rem;
+}
+
+h3 {
+    font-size: 1.6rem;
+}
+
+.mb-m {
+    margin-bottom: 2rem;
+}
+
+.ruler {
+    margin: 5rem 0;
+}
+
+.title {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 2.8rem;
+    margin: 2rem 0 8rem;
+}
+
+.notice {
+    font-size: 1.8rem;
+    font-weight: 200;
+}
+
+.card {
+    padding: 1rem 1.5rem;
+    border-radius: 3px;
+    box-shadow: rgba(0, 0, 0, .3) 0px 2px 6px;
+    max-width: 40rem;
+    background-color: oldlace;
+}
+
 .container {
     display: flex;
-    gap: 2rem;
+    font-size: 1.4rem;
+    width: 100%;
+}
+
+.container--narrow {
+    width: 70%;
+}
+
+.container--gap-s {
+    gap: .5rem;
+}
+
+.container--gap-m {
+    gap: 4rem;
+}
+
+.container--gap-l {
+    gap: 8rem;
 }
 
 .container--column {
@@ -21,16 +86,50 @@ body {
 }
 
 .row--left {
-    justify-items: flex-start;
+    justify-content: flex-start;
+}
+
+.row--center {
+    justify-content: center;
+}
+
+.row--align-center {
+    align-items: center;
+}
+
+.row--mb-s {
+    margin-bottom: 2rem;
+}
+
+.row--mb-m {
+    margin-bottom: 5rem;
+}
+
+.row--mb-l {
+    margin-bottom: 8rem;
 }
 
 .avatar-wrapper {
-    width: 20rem;
-    height: 20rem;
     overflow: hidden;
     border-radius: 50%;
 }
 
+.avatar-wrapper--s {
+    width: 5rem;
+    height: 5rem;
+}
+
+.avatar-wrapper--m {
+    width: 10rem;
+    height: 10rem;
+}
+
+.avatar-wrapper--l {
+    width: 15rem;
+    height: 15rem;
+}
+
 .avatar-wrapper > img {
     width: 100%;
+    height: 100%;
 }

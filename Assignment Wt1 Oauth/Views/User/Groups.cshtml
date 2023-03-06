@@ -1,24 +1,93 @@
 ﻿@using Assignment_Wt1_Oauth.Models.GroupsResponse
 @model GraphQLGroupsResponse
 
-<h1>Groups</h1>
+<div class="row row--center">
+    <h1 class="title">Groups</h1>
+</div>
 <div class="container container--column">
-    <div class="row">
-        <div class="container container--column">
+    <div class="row row--center">
+        <div class="container container--column container--narrow">
             @foreach (Node node in Model.data.currentUser.groupMemberships.nodes) {
                 <div class="row row--left">
-                    <div class="avatar-wrapper">
+                    <div class="avatar-wrapper avatar-wrapper--s">
                     @if (node.group.avatarUrl != null) {
-                        <img src="@node.group.avatarUrl" alt="Profile avatar" />
+                        <img src="@node.group.avatarUrl" alt="Group avatar" />
                     } else {
                     <img src="/not-announced.png" alt="Profile avatar" />
                     }
                     </div>
-                    <div class="container container--column">
-                        <h2>@node.group.name</h2>
-                        <h3>@node.group.fullPath</h3>
-                        <a href="@node.group.webUrl" target="_blank">@node.group.webUrl</a>
+                    <div class="container container--column container--gap-m">
+                        <div class="container container--column container--gap-s">
+                            <div class="row row--align-center">
+                                <h2>@node.group.name</h2> -
+                                <h3>@node.group.fullPath</h3>
+                            </div>
+                            <a href="@node.group.webUrl" target="_blank">@node.group.webUrl</a>
+                        </div>
+                        <div class="container container--column">
+                            <h3 class="mb-m">Projects</h3>
+                            @if (node.group.projects.nodes.Count > 0)
+                            {
+                                <div class="container container--column container--gap-s">
+                                @foreach (Node projectNode in node.group.projects.nodes) {
+                                    <div class="card container container--column container--gap-s">
+                                        <div class="row">
+                                            <div class="container container--column">
+                                                <h4>@projectNode.name</h4>
+                                                <h5>@projectNode.nameWithNamespace</h5>
+                                                <h5>@projectNode.fullPath</h5>
+                                                <a href="@projectNode.webUrl" target="_blank">@projectNode.webUrl</a>
+                                            </div>
+                                            @if (!string.IsNullOrEmpty(projectNode.avatarUrl))
+                                            {
+                                                <div class="avatar-wrapper avatar-wrapper--s">
+                                                    <img src="@projectNode.avatarUrl" alt="Project avatar" />
+                                                </div>
+                                            }
+                                        </div>
+                                        @if (projectNode.repository.tree.lastCommit != null)
+                                        {
+                                            <div class="container container--column">
+                                                <h5>Last commit</h5>
+                                                <p>@projectNode.repository.tree.lastCommit.authoredDate</p>
+                                                <div class="row">
+                                                    @if (!string.IsNullOrEmpty(projectNode.repository.tree.lastCommit.author.avatarUrl))
+                                                    {
+                                                        <div class="avatar-wrapper avatar-wrapper--s">
+                                                            @if (projectNode.repository.tree.lastCommit.author.avatarUrl.Contains("gravatar")) {
+                                                                <img src="@projectNode.repository.tree.lastCommit.author.avatarUrl" alt="Author avatar" />
+                                                            } else {
+                                                                <img src="@($"https://gitlab.lnu.se{@projectNode.repository.tree.lastCommit.author.avatarUrl}")" alt="Author avatar" />
+                                                            }
+                                                        </div>
+                                                    }
+                                                    <div class="container container--column">
+                                                        <p>@projectNode.repository.tree.lastCommit.author.username</p>
+                                                        <p>@projectNode.repository.tree.lastCommit.author.name</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                @if (@node.group.projects.pageInfo.hasNextPage)
+                                {
+                                    <div class="row row--center">
+                                        <p class="notice">There are more projects in this group at Gitlab...</p>
+                                    </div>
+                                }
+                                </div>
+                            } else {
+                                <p class="notice">No projects in this group.</p>
+                            }
+                        </div>
                     </div>
+                </div>
+                <hr class="ruler" />
+            }
+            @if (@Model.data.currentUser.groupMemberships.pageInfo.hasNextPage) {
+                <div class="row row--center">
+                    <p class="notice">More groups are available at Gitlab...</p>
                 </div>
             }
         </div>
