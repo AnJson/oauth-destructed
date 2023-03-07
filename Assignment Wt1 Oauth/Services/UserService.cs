@@ -1,13 +1,13 @@
 ﻿using Assignment_Wt1_Oauth.Contracts;
 using Assignment_Wt1_Oauth.Models;
 using Assignment_Wt1_Oauth.Models.GroupsResponse;
+using Assignment_Wt1_Oauth.Utils;
 
 namespace Assignment_Wt1_Oauth.Services
 {
     public class UserService : IUserService
     {
         private readonly IRequestHandler _requestHandler;
-
 
         public UserService(IRequestHandler requestHandler)
         {

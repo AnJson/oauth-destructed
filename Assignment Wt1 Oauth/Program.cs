@@ -23,7 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
         {
             options.LoginPath = "/";
             options.AccessDeniedPath = "/denied";
-            options.Cookie.Name = "wt1_1dv027-auth";
+            options.Cookie.Name = builder.Configuration.GetValue<string>("auth_cookie");
             options.Cookie.HttpOnly = true;
             options.Cookie.IsEssential = true;
             options.Events = new CookieAuthenticationEvents()
@@ -40,7 +40,7 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddSession(options =>
     {
-        options.Cookie.Name = "wt1_1dv027-session";
+        options.Cookie.Name = builder.Configuration.GetValue<string>("session_cookie");
         options.Cookie.HttpOnly = true;
         options.Cookie.IsEssential = true;
     });
