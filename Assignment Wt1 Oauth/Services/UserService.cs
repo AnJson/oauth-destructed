@@ -37,7 +37,7 @@ namespace Assignment_Wt1_Oauth.Services
         private async Task<UserProfile?> RequestUserProfile()
         {
             string accessKey = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.ACCESS_TOKEN);
-            string profileUri = _configuration.GetValue<string>("Oauthconfig:ProfileUri");
+            string profileUri = _configuration.GetValue<string>("Oauthconfig:profile_uri");
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessKey);
             HttpResponseMessage response = await _httpClient.GetAsync(profileUri);
@@ -54,11 +54,11 @@ namespace Assignment_Wt1_Oauth.Services
         private async Task<GraphQLGroupsResponse?> RequestGroups()
         {
             string accessKey = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.ACCESS_TOKEN);
-            string graphqlUri = _configuration.GetValue<string>("GraphqlConfig:GraphqlUri");
+            string graphqlUri = _configuration.GetValue<string>("GraphqlConfig:graphql_uri");
 
             var queryObject = new
             {
-                query = _configuration.GetValue<string>("GraphqlConfig:GroupsQuery")
+                query = _configuration.GetValue<string>("GraphqlConfig:groups_query")
             };
 
             var query = new StringContent(JsonSerializer.Serialize(queryObject), Encoding.UTF8, "application/json");

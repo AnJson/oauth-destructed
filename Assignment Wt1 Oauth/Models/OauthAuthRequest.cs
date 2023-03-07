@@ -2,17 +2,17 @@
 {
     public class OauthAuthRequest
     {
-        public string? AppId { get; set; }
-        public string? RedirectUri { get; set; }
-        public string? RequestedScopes { get; set; }
-        public string? AuthorizationUri { get; set; }
-        public string? CodeChallenge { get; set; }
-        public string? State { get; set; }
+        public string? client_id { get; set; }
+        public string? redirect_uri { get; set; }
+        public string? scope { get; set; }
+        public string? authorization_uri { get; set; }
+        public string? code_challenge { get; set; }
+        public string? state { get; set; }
 
 
         public override string ToString()
         {
-            return $"{AuthorizationUri}?client_id={AppId}&redirect_uri={RedirectUri}&response_type=code&state={State}&scope={RequestedScopes}&code_challenge={CodeChallenge}&code_challenge_method=S256";
+            return $"{authorization_uri}?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&state={state}&scope={scope}&code_challenge={code_challenge}&code_challenge_method=S256";
         }
     }
 }

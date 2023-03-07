@@ -14,17 +14,17 @@ namespace Assignment_Wt1_Oauth.Services
     {
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly HttpClient _httpClient;
         private readonly JwtHandler _jwtHandler;
         private readonly SessionHandler _sessionHandler;
+        private readonly IRequestHandler _requestHandler;
 
-        public AuthService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor, HttpClient httpClient, JwtHandler jwtHandler, SessionHandler sessionHandler)
+        public AuthService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor, JwtHandler jwtHandler, SessionHandler sessionHandler, IRequestHandler requestHandler)
         {
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
-            _httpClient = httpClient;
             _jwtHandler = jwtHandler;
             _sessionHandler = sessionHandler;
+            _requestHandler = requestHandler;
         }
 
         public OauthAuthRequest GetOauthAuthorizationUri()
@@ -35,8 +35,8 @@ namespace Assignment_Wt1_Oauth.Services
             if (!string.IsNullOrEmpty(state) && !string.IsNullOrEmpty(code_verifyer))
             {
                 OauthAuthRequest authOptions = _configuration.GetSection("Oauthconfig").Get<OauthAuthRequest>();
-                authOptions.State = state;
-                authOptions.CodeChallenge = GetCodeChallenge(code_verifyer);
+                authOptions.state = state;
+                authOptions.code_challenge = GetCodeChallenge(code_verifyer);
                 return authOptions;
             } else
             {
@@ -46,14 +46,10 @@ namespace Assignment_Wt1_Oauth.Services
 
         public async Task<OauthTokenResponse?> GetOauthToken(string code)
         {
-            OauthTokenRequest tokenRequestOptions = new OauthTokenRequest();
-            tokenRequestOptions.redirect_uri = _configuration.GetValue<string>("Oauthconfig:RedirectUri");
-            tokenRequestOptions.client_id = _configuration.GetValue<string>("Oauthconfig:AppId");
-            tokenRequestOptions.client_secret = _configuration.GetValue<string>("Oauthconfig:AppSecret");
+            OauthTokenRequest tokenRequestOptions = _configuration.GetSection("Oauthconfig").Get<OauthTokenRequest>();
             tokenRequestOptions.code = code;
-            tokenRequestOptions.grant_type = "authorization_code";
             tokenRequestOptions.code_verifier = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.CODE_VERIFIER);
-            OauthTokenResponse response = await getTokenRequest(tokenRequestOptions);
+            OauthTokenResponse response = await _requestHandler.getTokenRequest(tokenRequestOptions);
             return response;
         }
 
@@ -70,14 +66,17 @@ namespace Assignment_Wt1_Oauth.Services
             if (tokenResponse != null)
             {
                 IdTokenData idTokenData = _jwtHandler.GetIdTokenData(tokenResponse.id_token);
+                int expirationTime = (int)(tokenResponse.expires_in + tokenResponse.created_at);
+
                 _sessionHandler.SaveInSession(SessionHandler.SessionStorageKey.ACCESS_TOKEN, tokenResponse.access_token);
                 _sessionHandler.SaveInSession(SessionHandler.SessionStorageKey.REFRESH_TOKEN, tokenResponse.refresh_token);
+                _sessionHandler.SaveIntInSession(SessionHandler.SessionStorageKey.TOKEN_EXPIRES, expirationTime);
 
                 List<Claim> claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, idTokenData.sub)
                 };
-               
+
                 await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(new ClaimsIdentity(claims, "sub")));
             }
         }
@@ -92,26 +91,6 @@ namespace Assignment_Wt1_Oauth.Services
         private string GetRandomBase64String()
         {
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString())).Replace("=", "y").Replace("+", "-").Replace("/", "_");
-        }
-
-        private async Task<OauthTokenResponse?> getTokenRequest(OauthTokenRequest options)
-        {
-            // Transform OauthTokenRequest to enumerable keyvaluepair.
-            IEnumerable<KeyValuePair<string, string?>> optionsKeyValuePairs = options.GetType().GetProperties()
-                .Where(p => p.PropertyType == typeof(string))
-                .ToDictionary(p => p.Name, p => (string?)p.GetValue(options));
-
-            FormUrlEncodedContent content = new FormUrlEncodedContent(optionsKeyValuePairs);
-            string tokenUri = _configuration.GetValue<string>("Oauthconfig:TokenUri");
-            HttpResponseMessage response = await _httpClient.PostAsync(tokenUri, content);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception($"Token postrequest failed with statuscode {response.StatusCode}");
-            }
-
-            string responseContent = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<OauthTokenResponse>(responseContent);
         }
     }
 }
