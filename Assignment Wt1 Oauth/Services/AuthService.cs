@@ -14,11 +14,11 @@ namespace Assignment_Wt1_Oauth.Services
     {
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly JwtHandler _jwtHandler;
-        private readonly SessionHandler _sessionHandler;
+        private readonly IJwtHandler _jwtHandler;
+        private readonly ISessionHandler _sessionHandler;
         private readonly IRequestHandler _requestHandler;
 
-        public AuthService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor, JwtHandler jwtHandler, SessionHandler sessionHandler, IRequestHandler requestHandler)
+        public AuthService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IJwtHandler jwtHandler, ISessionHandler sessionHandler, IRequestHandler requestHandler)
         {
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;

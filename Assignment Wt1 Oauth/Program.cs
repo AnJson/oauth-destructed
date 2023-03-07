@@ -11,8 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
         .AddScoped<IUserService, UserService>()
         .AddScoped<IAuthService, AuthService>()
         .AddScoped<IErrorService, ErrorService>()
-        .AddScoped<JwtHandler>()
-        .AddScoped<SessionHandler>()
+        .AddScoped<IJwtHandler, JwtHandler>()
+        .AddScoped<ISessionHandler, SessionHandler>()
         .AddScoped<IRequestHandler, RequestHandler>();
 
     builder.Services.AddDistributedMemoryCache();

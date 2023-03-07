@@ -1,8 +1,9 @@
-﻿using System.Drawing;
+﻿using Assignment_Wt1_Oauth.Contracts;
+using System.Drawing;
 
 namespace Assignment_Wt1_Oauth.Utils
 {
-    public class SessionHandler
+    public class SessionHandler : ISessionHandler
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 

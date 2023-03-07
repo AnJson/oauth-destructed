@@ -8,10 +8,10 @@ namespace Assignment_Wt1_Oauth.Filters
 {
     public class OauthCsrfActionFilter : IAsyncActionFilter
     {
-        private readonly SessionHandler _sessionHandler;
+        private readonly ISessionHandler _sessionHandler;
         private readonly IConfiguration _configuration;
 
-        public OauthCsrfActionFilter(SessionHandler sessionHandler, IConfiguration configuration)
+        public OauthCsrfActionFilter(ISessionHandler sessionHandler, IConfiguration configuration)
         {
             _sessionHandler = sessionHandler;
             _configuration = configuration;

@@ -12,10 +12,10 @@ namespace Assignment_Wt1_Oauth.Utils
     public class RequestHandler : IRequestHandler
     {
         private readonly IConfiguration _configuration;
-        private readonly SessionHandler _sessionHandler;
+        private readonly ISessionHandler _sessionHandler;
         private readonly HttpClient _httpClient;
 
-        public RequestHandler (IConfiguration configuration, HttpClient httpClient, SessionHandler sessionHandler)
+        public RequestHandler (IConfiguration configuration, HttpClient httpClient, ISessionHandler sessionHandler)
         {
             _configuration = configuration;
             _httpClient = httpClient;

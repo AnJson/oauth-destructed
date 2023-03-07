@@ -1,10 +1,10 @@
-﻿using Assignment_Wt1_Oauth.Models;
-using Microsoft.AspNetCore.SignalR;
+﻿using Assignment_Wt1_Oauth.Contracts;
+using Assignment_Wt1_Oauth.Models;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace Assignment_Wt1_Oauth.Utils
 {
-    public class JwtHandler
+    public class JwtHandler : IJwtHandler
     {
         public IdTokenData GetIdTokenData(string id_token)
         {

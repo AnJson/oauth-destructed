@@ -12,11 +12,11 @@ namespace Assignment_Wt1_Oauth.Filters
 {
     public class RefreshTokenActionFilter : IAsyncActionFilter
     {
-        private readonly SessionHandler _sessionHandler;
+        private readonly ISessionHandler _sessionHandler;
         private readonly IConfiguration _configuration;
         private readonly IRequestHandler _requestHandler;
 
-        public RefreshTokenActionFilter(SessionHandler sessionHandler, IConfiguration configuration, IRequestHandler requestHandler)
+        public RefreshTokenActionFilter(ISessionHandler sessionHandler, IConfiguration configuration, IRequestHandler requestHandler)
         {
             _sessionHandler = sessionHandler;
             _configuration = configuration;
