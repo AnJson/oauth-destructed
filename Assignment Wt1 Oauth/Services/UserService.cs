@@ -54,52 +54,11 @@ namespace Assignment_Wt1_Oauth.Services
         private async Task<GraphQLGroupsResponse?> RequestGroups()
         {
             string accessKey = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.ACCESS_TOKEN);
-            string graphqlUri = _configuration.GetValue<string>("Oauthconfig:GraphqlUri");
+            string graphqlUri = _configuration.GetValue<string>("GraphqlConfig:GraphqlUri");
 
             var queryObject = new
             {
-                query = @"query {
-                          currentUser {
-                            groupMemberships(first: 3) {
-                              pageInfo {
-                                hasNextPage
-                              }
-                              nodes {
-                                group {
-                                  name
-                                  webUrl
-                                  avatarUrl
-                                  fullPath
-                                  projects(first: 5, includeSubgroups: true) {
-                                    pageInfo {
-                                      hasNextPage
-                                    }
-                                    nodes {
-                                      name
-                                      webUrl
-                                      avatarUrl
-                                      fullPath
-                                      nameWithNamespace
-                                      lastActivityAt #date of last commit or push event
-                                      repository {
-                                        tree {
-                                          lastCommit {
-                                            authoredDate
-                                            author {
-                                              name
-                                              avatarUrl
-                                              username
-                                            }
-                                          }
-                                        }
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }"
+                query = _configuration.GetValue<string>("GraphqlConfig:GroupsQuery")
             };
 
             var query = new StringContent(JsonSerializer.Serialize(queryObject), Encoding.UTF8, "application/json");
