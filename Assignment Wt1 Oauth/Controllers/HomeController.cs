@@ -22,7 +22,6 @@ namespace Assignment_Wt1_Oauth.Controllers
         [Route("/Error")]
         public IActionResult Error([FromQuery] string? statusCode)
         {
-            // NOTE: Fix this!
             if (statusCode == null)
             {
                 ViewBag.statusCode = _errorService.getErrorStatusCode();

@@ -21,24 +21,45 @@ namespace Assignment_Wt1_Oauth.Controllers
         [Route("[controller]")]
         public async Task<IActionResult> Index()
         {
-            UserProfile? userProfile = await _userService.GetUserProfile();
+            try
+            {
+                UserProfile? userProfile = await _userService.GetUserProfile();
 
-            return View(userProfile);
+                return View(userProfile);
+            } catch (Exception e)
+            {
+                Console.WriteLine("An exception occurred: {0}", e.Message);
+                return BadRequest();
+            }
         }
 
         [Route("[controller]/activities")]
         public async Task<IActionResult> Activities(string id)
         {
-            UserActivities userActivites = await _userService.GetActivities(101);
+            try
+            {
+                UserActivities userActivites = await _userService.GetActivities(101);
             
-            return View(userActivites);
+                return View(userActivites);
+            } catch (Exception e)
+            {
+                Console.WriteLine("An exception occurred: {0}", e.Message);
+                return BadRequest();
+            }
         }
 
         [Route("[controller]/groups")]
         public async Task<IActionResult> Groups()
         {
-            GraphQLGroupsResponse? groupsViewData = await _userService.GetGroupCollection();
-            return View(groupsViewData);
+            try
+            {
+                GraphQLGroupsResponse? groupsViewData = await _userService.GetGroupCollection();
+                return View(groupsViewData);
+            } catch (Exception e)
+            {
+                Console.WriteLine("An exception occurred: {0}", e.Message);
+                return BadRequest();
+            }
         }
     }
 }

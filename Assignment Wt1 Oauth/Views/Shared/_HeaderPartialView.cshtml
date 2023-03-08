@@ -1,3 +1,14 @@
-﻿<header>
-    <h1>Header</h1>
+﻿@inject IHttpContextAccessor HttpContextAccessor
+
+<header>
+    @if (HttpContextAccessor.HttpContext.User.Identity.IsAuthenticated) {
+        <a asp-controller="Auth" asp-action="Logout">Log out</a>
+        <nav class="navigation">
+            <a asp-controller="User" asp-action="Index">Profile</a>
+            <a asp-controller="User" asp-action="Groups">Groups</a>
+            <a asp-controller="User" asp-action="Activities">Activities</a>
+        </nav>
+    } else {
+        <a asp-controller="Auth" asp-action="Login">Log in</a>
+    }
 </header>

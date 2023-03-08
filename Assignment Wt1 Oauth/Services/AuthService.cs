@@ -81,6 +81,13 @@ namespace Assignment_Wt1_Oauth.Services
             }
         }
 
+        public async Task SignOut()
+        {
+            _httpContextAccessor.HttpContext.Session.Clear();
+            _httpContextAccessor.HttpContext.Response.Cookies.Delete(_configuration.GetValue<string>("session_cookie"));
+            await _httpContextAccessor.HttpContext.SignOutAsync();
+        }
+
         private string GetCodeChallenge(string text)
         {
             byte[] sha256Bytes = SHA256.HashData(Encoding.UTF8.GetBytes(text));

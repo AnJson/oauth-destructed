@@ -31,6 +31,21 @@ namespace Assignment_Wt1_Oauth.Controllers
             }
         }
 
+        [Route("/logout")]
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                await _authService.SignOut();
+                return Redirect("/");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return StatusCode(500);
+            }
+        }
+
         /// <summary>
         /// Callback-route specified in gitlab oauth with filter to verfy that arguments are supplied.
         /// If arguments is not supplied a BadRequest-result is sent to the client.
