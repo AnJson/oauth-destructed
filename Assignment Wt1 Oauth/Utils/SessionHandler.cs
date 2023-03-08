@@ -1,4 +1,7 @@
 ﻿using Assignment_Wt1_Oauth.Contracts;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Configuration;
 using System.Drawing;
 
 namespace Assignment_Wt1_Oauth.Utils
@@ -6,10 +9,12 @@ namespace Assignment_Wt1_Oauth.Utils
     public class SessionHandler : ISessionHandler
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration _configuration;
 
-        public SessionHandler(IHttpContextAccessor httpContextAccessor)
+        public SessionHandler(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
             _httpContextAccessor = httpContextAccessor;
+            _configuration = configuration;
         }
 
         public enum SessionStorageKey
@@ -58,6 +63,13 @@ namespace Assignment_Wt1_Oauth.Utils
         public int? GetIntFromSession(SessionStorageKey key)
         {
             return _httpContextAccessor.HttpContext.Session.GetInt32(GetSessionStorageKey(key));
+        }
+
+        public async Task signOut()
+        {
+            _httpContextAccessor.HttpContext.Session.Clear();
+            _httpContextAccessor.HttpContext.Response.Cookies.Delete(_configuration.GetValue<string>("session_cookie"));
+            await _httpContextAccessor.HttpContext.SignOutAsync();
         }
     }
 }

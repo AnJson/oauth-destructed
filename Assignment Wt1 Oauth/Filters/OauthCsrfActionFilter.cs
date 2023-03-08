@@ -9,12 +9,10 @@ namespace Assignment_Wt1_Oauth.Filters
     public class OauthCsrfActionFilter : IAsyncActionFilter
     {
         private readonly ISessionHandler _sessionHandler;
-        private readonly IConfiguration _configuration;
 
-        public OauthCsrfActionFilter(ISessionHandler sessionHandler, IConfiguration configuration)
+        public OauthCsrfActionFilter(ISessionHandler sessionHandler)
         {
             _sessionHandler = sessionHandler;
-            _configuration = configuration;
         }
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -26,9 +24,7 @@ namespace Assignment_Wt1_Oauth.Filters
 
                 if (recievedState != originalState)
                 {
-                    context.HttpContext.Session.Clear();
-                    context.HttpContext.Response.Cookies.Delete(_configuration.GetValue<string>("session_cookie"));
-                    await context.HttpContext.SignOutAsync();
+                    await _sessionHandler.signOut();
                     context.Result = authController.Redirect("/");
                 } else
                 {

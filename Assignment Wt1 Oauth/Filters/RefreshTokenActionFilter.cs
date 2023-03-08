@@ -34,7 +34,7 @@ namespace Assignment_Wt1_Oauth.Filters
                 // No data in session storage.
                 if (!tokenExpires.HasValue)
                 {
-                    await signOut(context);
+                    await _sessionHandler.signOut();
                     context.Result = userController.StatusCode(403);
                 } else if (now > tokenExpires)
                 {
@@ -55,7 +55,7 @@ namespace Assignment_Wt1_Oauth.Filters
                     catch (Exception e)
                     {
                         Console.WriteLine(e.Message);
-                        await signOut(context);
+                        await _sessionHandler.signOut();
                         context.Result = userController.Forbid();
                     }
                 }
@@ -68,13 +68,6 @@ namespace Assignment_Wt1_Oauth.Filters
             {
                 await next();
             }
-        }
-
-        private async Task signOut(ActionExecutingContext context)
-        {
-            context.HttpContext.Session.Clear();
-            context.HttpContext.Response.Cookies.Delete(_configuration.GetValue<string>("session_cookie"));
-            await context.HttpContext.SignOutAsync();
         }
     }
 }
