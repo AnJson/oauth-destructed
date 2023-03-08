@@ -1,7 +1,6 @@
 ﻿using Assignment_Wt1_Oauth.Contracts;
 using Assignment_Wt1_Oauth.Controllers;
 using Assignment_Wt1_Oauth.Utils;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Assignment_Wt1_Oauth.Filters
@@ -24,7 +23,7 @@ namespace Assignment_Wt1_Oauth.Filters
 
                 if (recievedState != originalState)
                 {
-                    await _sessionHandler.signOut();
+                    await _sessionHandler.SignOut();
                     context.Result = authController.Redirect("/");
                 } else
                 {

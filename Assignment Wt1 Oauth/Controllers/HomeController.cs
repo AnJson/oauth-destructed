@@ -1,5 +1,4 @@
 ﻿using Assignment_Wt1_Oauth.Contracts;
-using Assignment_Wt1_Oauth.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Assignment_Wt1_Oauth.Controllers

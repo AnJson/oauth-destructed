@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Assignment_Wt1_Oauth.Models;
 using static Assignment_Wt1_Oauth.Utils.SessionHandler;
 
 namespace Assignment_Wt1_Oauth.Contracts
@@ -10,7 +10,7 @@ namespace Assignment_Wt1_Oauth.Contracts
         public void SaveIntInSession(SessionStorageKey key, int value);
         public string? GetFromSession(SessionStorageKey key);
         public int? GetIntFromSession(SessionStorageKey key);
-        public Task signOut();
-        public Task signIn();
+        public Task SignOut();
+        public Task SignIn(OauthTokenResponse? tokenResponse);
     }
 }

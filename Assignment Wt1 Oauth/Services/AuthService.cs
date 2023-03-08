@@ -1,28 +1,20 @@
 ﻿using Assignment_Wt1_Oauth.Contracts;
 using Assignment_Wt1_Oauth.Models;
 using Assignment_Wt1_Oauth.Utils;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 
 namespace Assignment_Wt1_Oauth.Services
 {
     public class AuthService : IAuthService
     {
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IJwtHandler _jwtHandler;
         private readonly ISessionHandler _sessionHandler;
         private readonly IRequestHandler _requestHandler;
 
-        public AuthService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IJwtHandler jwtHandler, ISessionHandler sessionHandler, IRequestHandler requestHandler)
+        public AuthService(IConfiguration configuration, ISessionHandler sessionHandler, IRequestHandler requestHandler)
         {
             _configuration = configuration;
-            _httpContextAccessor = httpContextAccessor;
-            _jwtHandler = jwtHandler;
             _sessionHandler = sessionHandler;
             _requestHandler = requestHandler;
         }
@@ -63,29 +55,12 @@ namespace Assignment_Wt1_Oauth.Services
 
         public async Task SignIn(OauthTokenResponse? tokenResponse)
         {
-            if (tokenResponse != null)
-            {
-                IdTokenData idTokenData = _jwtHandler.GetIdTokenData(tokenResponse.id_token);
-                int expirationTime = (int)(tokenResponse.expires_in + tokenResponse.created_at);
-
-                _sessionHandler.SaveInSession(SessionHandler.SessionStorageKey.ACCESS_TOKEN, tokenResponse.access_token);
-                _sessionHandler.SaveInSession(SessionHandler.SessionStorageKey.REFRESH_TOKEN, tokenResponse.refresh_token);
-                _sessionHandler.SaveIntInSession(SessionHandler.SessionStorageKey.TOKEN_EXPIRES, expirationTime);
-
-                List<Claim> claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, idTokenData.sub)
-                };
-
-                await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(new ClaimsIdentity(claims, "sub")));
-            }
+            await _sessionHandler.SignIn(tokenResponse);
         }
 
         public async Task SignOut()
         {
-            _httpContextAccessor.HttpContext.Session.Clear();
-            _httpContextAccessor.HttpContext.Response.Cookies.Delete(_configuration.GetValue<string>("session_cookie"));
-            await _httpContextAccessor.HttpContext.SignOutAsync();
+            await _sessionHandler.SignOut();
         }
 
         private string GetCodeChallenge(string text)

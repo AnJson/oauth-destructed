@@ -4,9 +4,6 @@ using Assignment_Wt1_Oauth.Models;
 using Assignment_Wt1_Oauth.Utils;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Configuration;
-using System.Net.Http;
-using System.Text.Json;
 
 namespace Assignment_Wt1_Oauth.Filters
 {
@@ -34,7 +31,7 @@ namespace Assignment_Wt1_Oauth.Filters
                 // No data in session storage.
                 if (!tokenExpires.HasValue)
                 {
-                    await _sessionHandler.signOut();
+                    await _sessionHandler.SignOut();
                     context.Result = userController.StatusCode(403);
                 } else if (now > tokenExpires)
                 {
@@ -55,7 +52,7 @@ namespace Assignment_Wt1_Oauth.Filters
                     catch (Exception e)
                     {
                         Console.WriteLine(e.Message);
-                        await _sessionHandler.signOut();
+                        await _sessionHandler.SignOut();
                         context.Result = userController.Forbid();
                     }
                 }

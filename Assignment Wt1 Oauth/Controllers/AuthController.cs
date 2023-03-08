@@ -31,6 +31,7 @@ namespace Assignment_Wt1_Oauth.Controllers
             }
         }
 
+        [Authorize]
         [Route("/logout")]
         public async Task<IActionResult> Logout()
         {
