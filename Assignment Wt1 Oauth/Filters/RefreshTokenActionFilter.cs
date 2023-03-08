@@ -25,12 +25,18 @@ namespace Assignment_Wt1_Oauth.Filters
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
+            
             if (context.Controller is UserController userController)
             {
                 int? tokenExpires = _sessionHandler.GetIntFromSession(SessionHandler.SessionStorageKey.TOKEN_EXPIRES);
                 Int32 now = (Int32)(DateTime.Now.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 
-                if (now > tokenExpires)
+                // No data in session storage.
+                if (!tokenExpires.HasValue)
+                {
+                    await signOut(context);
+                    context.Result = userController.StatusCode(403);
+                } else if (now > tokenExpires)
                 {
                     try
                     {
@@ -45,20 +51,30 @@ namespace Assignment_Wt1_Oauth.Filters
                         _sessionHandler.SaveIntInSession(SessionHandler.SessionStorageKey.TOKEN_EXPIRES, expirationTime);
 
                         await next();
-                    } catch (Exception e)
+                    }
+                    catch (Exception e)
                     {
                         Console.WriteLine(e.Message);
-                        context.HttpContext.Session.Clear();
-                        context.HttpContext.Response.Cookies.Delete(_configuration.GetValue<string>("session_cookie"));
-                        await context.HttpContext.SignOutAsync();
+                        await signOut(context);
                         context.Result = userController.Forbid();
                     }
                 }
-
-            } else
+                else
+                {
+                    await next();
+                }
+            } 
+            else
             {
                 await next();
             }
+        }
+
+        private async Task signOut(ActionExecutingContext context)
+        {
+            context.HttpContext.Session.Clear();
+            context.HttpContext.Response.Cookies.Delete(_configuration.GetValue<string>("session_cookie"));
+            await context.HttpContext.SignOutAsync();
         }
     }
 }

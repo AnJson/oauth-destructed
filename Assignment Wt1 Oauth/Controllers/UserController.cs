@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Assignment_Wt1_Oauth.Controllers
 {
     [Authorize]
-    // [TypeFilter(typeof(RefreshTokenActionFilter))]
+    [TypeFilter(typeof(RefreshTokenActionFilter))]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
