@@ -101,5 +101,41 @@ namespace Assignment_Wt1_Oauth.Utils
             string responseContent = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<GraphQLGroupsResponse>(responseContent);
         }
+
+        public async Task<UserActivities> getActivites(int requestedActivities)
+        {
+            string accessKey = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.ACCESS_TOKEN);
+            ActivitiesRequest activitiesRequest = _configuration.GetSection("OauthConfig").Get<ActivitiesRequest>();
+            activitiesRequest.page = 1;
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessKey);
+
+            List <Activity> activities = new List<Activity>();
+            while (activities.Count < requestedActivities)
+            {
+                // Set the pre_page query value to max or to requested amount of activities if lower than max.
+                activitiesRequest.per_page = Math.Min(100, requestedActivities);
+
+                HttpResponseMessage response = await _httpClient.GetAsync(activitiesRequest.ToString());
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception($"Groups activites request failed with statuscode {response.StatusCode}");
+                }
+
+                string responseContent = await response.Content.ReadAsStringAsync();
+                List<Activity> fetchedActivities = JsonSerializer.Deserialize<List<Activity>>(responseContent);
+
+                // May be overfetching and to only return a list of max 101 activities, less than the fetched amount of activities may have to be added.
+                int activitiesToAdd = Math.Min(100, (requestedActivities - activities.Count));
+                activities.AddRange(fetchedActivities.Take(activitiesToAdd));
+                activitiesRequest.page++;
+            }
+
+            return new UserActivities
+            {
+                Activities = activities
+            };
+        }
     }
 }

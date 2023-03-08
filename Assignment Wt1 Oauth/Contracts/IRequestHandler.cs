@@ -9,5 +9,6 @@ namespace Assignment_Wt1_Oauth.Contracts
         public Task<OauthTokenResponse?> getTokenRequest(OauthRefreshTokenRequest options);
         public Task<UserProfile?> getUserProfile();
         public Task<GraphQLGroupsResponse?> getGroups();
+        public Task<UserActivities> getActivites(int count);
     }
 }

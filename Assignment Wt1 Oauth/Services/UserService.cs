@@ -14,14 +14,19 @@ namespace Assignment_Wt1_Oauth.Services
             _requestHandler = requestHandler;
         }
 
+        public async Task<UserProfile?> GetUserProfile()
+        {
+            return await _requestHandler.getUserProfile();
+        }
+
         public async Task<GraphQLGroupsResponse?> GetGroupCollection()
         {
             return await _requestHandler.getGroups();
         }
 
-        public async Task<UserProfile?> GetUserProfile()
+        public async Task<UserActivities?> GetActivities(int count)
         {
-            return await _requestHandler.getUserProfile();
+            return await _requestHandler.getActivites(count);
         }
     }
 }

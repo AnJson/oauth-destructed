@@ -7,5 +7,6 @@ namespace Assignment_Wt1_Oauth.Contracts
     {
         public Task<UserProfile?> GetUserProfile();
         public Task<GraphQLGroupsResponse?> GetGroupCollection();
+        public Task<UserActivities?> GetActivities(int count);
     }
 }

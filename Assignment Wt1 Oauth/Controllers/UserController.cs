@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Assignment_Wt1_Oauth.Controllers
 {
     [Authorize]
-    [TypeFilter(typeof(RefreshTokenActionFilter))]
+    // [TypeFilter(typeof(RefreshTokenActionFilter))]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -27,9 +27,11 @@ namespace Assignment_Wt1_Oauth.Controllers
         }
 
         [Route("[controller]/activities")]
-        public IActionResult Activities(string id)
+        public async Task<IActionResult> Activities(string id)
         {
-            return View();
+            UserActivities userActivites = await _userService.GetActivities(101);
+            
+            return View(userActivites);
         }
 
         [Route("[controller]/groups")]
