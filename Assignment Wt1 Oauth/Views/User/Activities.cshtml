@@ -1,1 +1,30 @@
-﻿<h1>Activities</h1>
+﻿@using Assignment_Wt1_Oauth.Models
+@model UserActivities
+
+@{
+    int index = 1;
+}
+
+<div class="row row--center">
+    <h1 class="title">Activities</h1>
+</div>
+<div class="row row--center">
+    <div class="activities container container--column container--gap-s container--narrow">
+        <div class="row row--left activities_row">
+            <div class="activities_title activities_narrow">Action Name</div>
+            <div class="activities_title activities_narrow">Created At</div>
+            <div class="activities_title activities_wide">TargetTitle</div>
+            <div class="activities_title activities_narrow">TargetType</div>
+        </div>
+        @foreach (Activity activity in Model.Activities)
+        {
+            <div class="row row--left activities_row">
+                <div class="activities_narrow">@index . @activity.action_name</div>
+                <div class="activities_narrow">@activity.created_at</div>
+                <div class="activities_wide">@activity.target_title</div>
+                <div class="activities_narrow">@activity.target_type</div>
+            </div>
+            index++;
+        }
+    </div>
+</div>

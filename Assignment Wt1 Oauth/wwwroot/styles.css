@@ -133,3 +133,27 @@ h3 {
     width: 100%;
     height: 100%;
 }
+
+.activities {
+    font-size: 1.6rem;
+}
+
+.activities > div:nth-child(even) {
+    background-color: cornsilk;
+}
+
+.activities_title {
+    font-weight: 600;
+}
+
+.activities_narrow {
+    width: 15%;
+}
+
+.activities_wide {
+    width: 55%;
+}
+
+.activities_row {
+    padding: .7rem 0;
+}
