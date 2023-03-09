@@ -21,19 +21,14 @@ namespace Assignment_Wt1_Oauth.Services
 
         public OauthAuthRequest GetOauthAuthorizationUri()
         {
+            InitAuthRequest();
             string state = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.STATE);
             string code_verifyer = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.CODE_VERIFIER);
-
-            if (!string.IsNullOrEmpty(state) && !string.IsNullOrEmpty(code_verifyer))
-            {
-                OauthAuthRequest authOptions = _configuration.GetSection("Oauthconfig").Get<OauthAuthRequest>();
-                authOptions.state = state;
-                authOptions.code_challenge = GetCodeChallenge(code_verifyer);
-                return authOptions;
-            } else
-            {
-                throw new Exception("Expected InitAuthRequest to have been executed before the GetOauthAuthorizationUri.");
-            }
+  
+            OauthAuthRequest authOptions = _configuration.GetSection("Oauthconfig").Get<OauthAuthRequest>();
+            authOptions.state = state;
+            authOptions.code_challenge = GetCodeChallenge(code_verifyer);
+            return authOptions;
         }
 
         public async Task<OauthTokenResponse?> GetOauthToken(string code)
@@ -43,14 +38,6 @@ namespace Assignment_Wt1_Oauth.Services
             tokenRequestOptions.code_verifier = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.CODE_VERIFIER);
             OauthTokenResponse response = await _requestHandler.getTokenRequest(tokenRequestOptions);
             return response;
-        }
-
-        public void InitAuthRequest()
-        {
-            string code_verifier = GetRandomBase64String();
-            _sessionHandler.SaveInSession(SessionHandler.SessionStorageKey.CODE_VERIFIER, code_verifier);
-            string state = GetRandomBase64String();
-            _sessionHandler.SaveInSession(SessionHandler.SessionStorageKey.STATE, state);
         }
 
         public async Task SignIn(OauthTokenResponse? tokenResponse)
@@ -73,6 +60,14 @@ namespace Assignment_Wt1_Oauth.Services
         private string GetRandomBase64String()
         {
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString())).Replace("=", "y").Replace("+", "-").Replace("/", "_");
+        }
+
+        private void InitAuthRequest()
+        {
+            string code_verifier = GetRandomBase64String();
+            _sessionHandler.SaveInSession(SessionHandler.SessionStorageKey.CODE_VERIFIER, code_verifier);
+            string state = GetRandomBase64String();
+            _sessionHandler.SaveInSession(SessionHandler.SessionStorageKey.STATE, state);
         }
     }
 }

@@ -21,7 +21,6 @@ namespace Assignment_Wt1_Oauth.Controllers
         {
             try
             {
-                _authService.InitAuthRequest();
                 OauthAuthRequest authRequestObject = _authService.GetOauthAuthorizationUri();
                 return Redirect(authRequestObject.ToString());
             } catch (Exception e)
