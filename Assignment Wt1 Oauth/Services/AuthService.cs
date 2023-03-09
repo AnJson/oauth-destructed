@@ -51,7 +51,7 @@ namespace Assignment_Wt1_Oauth.Services
   
             OauthAuthRequest authOptions = _configuration.GetSection("Oauthconfig").Get<OauthAuthRequest>();
             authOptions.state = state;
-            authOptions.code_challenge = GetCodeChallenge(code_verifyer);
+            authOptions.codeChallenge = GetCodeChallenge(code_verifyer);
             return authOptions;
         }
 
@@ -64,7 +64,7 @@ namespace Assignment_Wt1_Oauth.Services
         {
             OauthTokenRequest tokenRequestOptions = _configuration.GetSection("Oauthconfig").Get<OauthTokenRequest>();
             tokenRequestOptions.code = code;
-            tokenRequestOptions.code_verifier = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.CODE_VERIFIER);
+            tokenRequestOptions.codeVerifier = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.CODE_VERIFIER);
             OauthTokenResponse response = await _requestHandler.getTokenRequest(tokenRequestOptions);
             return response;
         }

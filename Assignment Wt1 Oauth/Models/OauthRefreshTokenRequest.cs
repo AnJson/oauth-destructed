@@ -5,11 +5,11 @@
     /// </summary>
     public class OauthRefreshTokenRequest
     {
-        public string? client_id { get; set; }
-        public string? refresh_token { get; set; }
-        public string? grant_type { get; } = "refresh_token";
-        public string? redirect_uri { get; set; }
-        public string? code_verifier { get; set; }
-        public string? client_secret { get; set; }
+        public string? clientId { get; set; }
+        public string? refreshToken { get; set; }
+        public string? grantType { get; } = "refresh_token";
+        public string? redirectUri { get; set; }
+        public string? codeVerifier { get; set; }
+        public string? clientSecret { get; set; }
     }
 }

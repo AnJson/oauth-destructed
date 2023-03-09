@@ -5,9 +5,9 @@
     /// </summary>
     public class ActivitiesRequest
     {
-        public string? events_uri { get; set; }
-        public int? per_page { get; set; }
-        public int? page { get; set; }
+        public string? EventsUri { get; set; }
+        public int? PerPage { get; set; }
+        public int? Page { get; set; }
 
 
         /// <summary>
@@ -16,7 +16,7 @@
         /// <returns>Full url.</returns>
         public override string ToString()
         {
-            return $"{events_uri}?per_page={per_page}&page={page}";
+            return $"{EventsUri}?per_page={PerPage}&page={Page}";
         }
     }
 }

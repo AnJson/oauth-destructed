@@ -68,8 +68,8 @@ namespace Assignment_Wt1_Oauth.Filters
                     {
                         // Requesting a new access-token.
                         OauthRefreshTokenRequest refreshTokenRequestOptions = _configuration.GetSection("Oauthconfig").Get<OauthRefreshTokenRequest>();
-                        refreshTokenRequestOptions.code_verifier = context.HttpContext.Session.GetString(_sessionHandler.GetSessionStorageKey(SessionHandler.SessionStorageKey.CODE_VERIFIER));
-                        refreshTokenRequestOptions.refresh_token = context.HttpContext.Session.GetString(_sessionHandler.GetSessionStorageKey(SessionHandler.SessionStorageKey.REFRESH_TOKEN));
+                        refreshTokenRequestOptions.codeVerifier = context.HttpContext.Session.GetString(_sessionHandler.GetSessionStorageKey(SessionHandler.SessionStorageKey.CODE_VERIFIER));
+                        refreshTokenRequestOptions.refreshToken = context.HttpContext.Session.GetString(_sessionHandler.GetSessionStorageKey(SessionHandler.SessionStorageKey.REFRESH_TOKEN));
                         OauthTokenResponse tokenResponse = await _requestHandler.getTokenRequest(refreshTokenRequestOptions);
 
                         // Saving new data in session.

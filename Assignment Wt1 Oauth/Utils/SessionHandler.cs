@@ -125,7 +125,7 @@ namespace Assignment_Wt1_Oauth.Utils
         public async Task SignOut()
         {
             _httpContextAccessor.HttpContext.Session.Clear();
-            _httpContextAccessor.HttpContext.Response.Cookies.Delete(_configuration.GetValue<string>("session_cookie"));
+            _httpContextAccessor.HttpContext.Response.Cookies.Delete(_configuration.GetValue<string>("SessionCookie"));
             await _httpContextAccessor.HttpContext.SignOutAsync();
         }
 

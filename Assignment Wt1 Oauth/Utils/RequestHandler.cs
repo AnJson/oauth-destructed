@@ -50,13 +50,18 @@ namespace Assignment_Wt1_Oauth.Utils
         /// <exception cref="Exception">If request is not successfull.</exception>
         public async Task<OauthTokenResponse?> getTokenRequest(OauthTokenRequest options)
         {
-            // Transform OauthTokenRequest to enumerable keyvaluepair.
-            IEnumerable<KeyValuePair<string, string?>> optionsKeyValuePairs = options.GetType().GetProperties()
-                .Where(p => p.PropertyType == typeof(string))
-                .ToDictionary(p => p.Name, p => (string?)p.GetValue(options));
+            Dictionary<string, string> optionsKeyValuePairs = new Dictionary<string, string>
+            {
+                { "client_id", options.clientId },
+                { "code", options.code },
+                { "grant_type", options.grantType},
+                { "redirect_uri", options.redirectUri },
+                { "code_verifier", options.codeVerifier },
+                { "client_secret", options.clientSecret }
+            };
 
             FormUrlEncodedContent content = new FormUrlEncodedContent(optionsKeyValuePairs);
-            string tokenUri = _configuration.GetValue<string>("Oauthconfig:token_uri");
+            string tokenUri = _configuration.GetValue<string>("Oauthconfig:TokenUri");
             HttpResponseMessage response = await _httpClient.PostAsync(tokenUri, content);
 
             if (!response.IsSuccessStatusCode)
@@ -76,13 +81,18 @@ namespace Assignment_Wt1_Oauth.Utils
         /// <exception cref="Exception">If request is not successfull.</exception>
         public async Task<OauthTokenResponse?> getTokenRequest(OauthRefreshTokenRequest options)
         {
-            // Transform OauthTokenRequest to enumerable keyvaluepair.
-            IEnumerable<KeyValuePair<string, string?>> optionsKeyValuePairs = options.GetType().GetProperties()
-                .Where(p => p.PropertyType == typeof(string))
-                .ToDictionary(p => p.Name, p => (string?)p.GetValue(options));
+            Dictionary<string, string> optionsKeyValuePairs = new Dictionary<string, string>
+            {
+                { "client_id", options.clientId },
+                { "refresh_token", options.refreshToken },
+                { "grant_type", options.grantType},
+                { "redirect_uri", options.redirectUri },
+                { "code_verifier", options.codeVerifier },
+                { "client_secret", options.clientSecret }
+            };
 
             FormUrlEncodedContent content = new FormUrlEncodedContent(optionsKeyValuePairs);
-            string tokenUri = _configuration.GetValue<string>("Oauthconfig:token_uri");
+            string tokenUri = _configuration.GetValue<string>("Oauthconfig:TokenUri");
             HttpResponseMessage response = await _httpClient.PostAsync(tokenUri, content);
 
             if (!response.IsSuccessStatusCode)
@@ -102,7 +112,7 @@ namespace Assignment_Wt1_Oauth.Utils
         public async Task<UserProfile?> getUserProfile()
         {
             string accessKey = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.ACCESS_TOKEN);
-            string profileUri = _configuration.GetValue<string>("Oauthconfig:profile_uri");
+            string profileUri = _configuration.GetValue<string>("Oauthconfig:ProfileUri");
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessKey);
             HttpResponseMessage response = await _httpClient.GetAsync(profileUri);
@@ -124,11 +134,11 @@ namespace Assignment_Wt1_Oauth.Utils
         public async Task<GraphQLGroupsResponse?> getGroups()
         {
             string accessKey = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.ACCESS_TOKEN);
-            string graphqlUri = _configuration.GetValue<string>("GraphqlConfig:graphql_uri");
+            string graphqlUri = _configuration.GetValue<string>("GraphqlConfig:GraphqlUri");
 
             var queryObject = new
             {
-                query = _configuration.GetValue<string>("GraphqlConfig:groups_query")
+                query = _configuration.GetValue<string>("GraphqlConfig:GroupsQuery")
             };
 
             var query = new StringContent(JsonSerializer.Serialize(queryObject), Encoding.UTF8, "application/json");
@@ -153,8 +163,8 @@ namespace Assignment_Wt1_Oauth.Utils
         public async Task<UserActivities> getActivites(int requestedActivities)
         {
             string accessKey = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.ACCESS_TOKEN);
-            ActivitiesRequest activitiesRequest = _configuration.GetSection("OauthConfig").Get<ActivitiesRequest>();
-            activitiesRequest.page = 1;
+            ActivitiesRequest activitiesRequest = _configuration.GetSection("Oauthconfig").Get<ActivitiesRequest>();
+            activitiesRequest.Page = 1;
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessKey);
 
@@ -162,7 +172,7 @@ namespace Assignment_Wt1_Oauth.Utils
             while (activities.Count < requestedActivities)
             {
                 // Set the pre_page query value to max or to requested amount of activities if lower than max.
-                activitiesRequest.per_page = Math.Min(100, requestedActivities);
+                activitiesRequest.PerPage = Math.Min(100, requestedActivities);
 
                 HttpResponseMessage response = await _httpClient.GetAsync(activitiesRequest.ToString());
 
@@ -177,7 +187,7 @@ namespace Assignment_Wt1_Oauth.Utils
                 // May be overfetching and to only return a list of max 101 activities, less than the fetched amount of activities may have to be added.
                 int activitiesToAdd = Math.Min(100, (requestedActivities - activities.Count));
                 activities.AddRange(fetchedActivities.Take(activitiesToAdd));
-                activitiesRequest.page++;
+                activitiesRequest.Page++;
             }
 
             return new UserActivities

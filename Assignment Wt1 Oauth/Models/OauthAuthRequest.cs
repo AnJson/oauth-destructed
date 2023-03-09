@@ -5,11 +5,11 @@
     /// </summary>
     public class OauthAuthRequest
     {
-        public string? client_id { get; set; }
-        public string? redirect_uri { get; set; }
+        public string? clientId { get; set; }
+        public string? redirectUri { get; set; }
         public string? scope { get; set; }
-        public string? authorization_uri { get; set; }
-        public string? code_challenge { get; set; }
+        public string? authorizationUri { get; set; }
+        public string? codeChallenge { get; set; }
         public string? state { get; set; }
 
         /// <summary>
@@ -18,7 +18,7 @@
         /// <returns>Full url.</returns>
         public override string ToString()
         {
-            return $"{authorization_uri}?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&state={state}&scope={scope}&code_challenge={code_challenge}&code_challenge_method=S256";
+            return $"{authorizationUri}?client_id={clientId}&redirect_uri={redirectUri}&response_type=code&state={state}&scope={scope}&code_challenge={codeChallenge}&code_challenge_method=S256";
         }
     }
 }
