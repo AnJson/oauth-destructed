@@ -1,5 +1,8 @@
 ﻿namespace Assignment_Wt1_Oauth.Models
 {
+    /// <summary>
+    /// Wrapper for query to be sent in refresh-token request.
+    /// </summary>
     public class OauthRefreshTokenRequest
     {
         public string? client_id { get; set; }

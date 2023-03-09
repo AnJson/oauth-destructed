@@ -1,5 +1,8 @@
 ﻿namespace Assignment_Wt1_Oauth.Models
 {
+    /// <summary>
+    /// Wrapper for user data to extract from user response.
+    /// </summary>
     public class UserProfile
     {
         public int? id { get; set; }

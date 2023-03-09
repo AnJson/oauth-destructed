@@ -1,5 +1,8 @@
 ﻿namespace Assignment_Wt1_Oauth.Models
 {
+    /// <summary>
+    /// Model used to present activity in view.
+    /// </summary>
     public class Activity
     {
         public string? action_name { get; set; }

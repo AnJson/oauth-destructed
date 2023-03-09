@@ -1,5 +1,8 @@
 ﻿namespace Assignment_Wt1_Oauth.Models.GroupsResponse
 {
+    /// <summary>
+    /// Model for node property in GraphQL-response.
+    /// </summary>
     public class Node
     {
         public Group group { get; set; }
