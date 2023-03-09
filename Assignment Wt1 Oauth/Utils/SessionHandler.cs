@@ -9,12 +9,32 @@ using System.Security.Claims;
 
 namespace Assignment_Wt1_Oauth.Utils
 {
+    /// <summary>
+    /// Handles session-storage.
+    /// </summary>
     public class SessionHandler : ISessionHandler
     {
+        /// <summary>
+        /// Injected service.
+        /// </summary>
         private readonly IHttpContextAccessor _httpContextAccessor;
+
+        /// <summary>
+        /// Injected service.
+        /// </summary>
         private readonly IConfiguration _configuration;
+
+        /// <summary>
+        /// Injected service.
+        /// </summary>
         private readonly IJwtHandler _jwtHandler;
 
+        /// <summary>
+        /// Constructor recieving injected services.
+        /// </summary>
+        /// <param name="httpContextAccessor">Service to inject.</param>
+        /// <param name="configuration">Service to inject.</param>
+        /// <param name="jwtHandler">Service to inject.</param>
         public SessionHandler(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IJwtHandler jwtHandler)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -22,6 +42,10 @@ namespace Assignment_Wt1_Oauth.Utils
             _jwtHandler = jwtHandler;
         }
 
+        /// <summary>
+        /// Enum for available session keys.
+        /// Used in GetSessionStorageKey to get the key as a string.
+        /// </summary>
         public enum SessionStorageKey
         {
             ACCESS_TOKEN,
@@ -31,6 +55,12 @@ namespace Assignment_Wt1_Oauth.Utils
             TOKEN_EXPIRES
         }
 
+        /// <summary>
+        /// Factory-method to get session key as a string.
+        /// </summary>
+        /// <param name="key">Enum key to get as string.</param>
+        /// <returns>Session key as string.</returns>
+        /// <exception cref="ArgumentException">If invalid argument.</exception>
         public string GetSessionStorageKey(SessionStorageKey key)
         {
             switch (key)
@@ -50,26 +80,48 @@ namespace Assignment_Wt1_Oauth.Utils
             }
         }
 
+        /// <summary>
+        /// Saves string in session storage.
+        /// </summary>
+        /// <param name="key">Key name.</param>
+        /// <param name="value">The value to store for the key.</param>
         public void SaveInSession(SessionStorageKey key, string value)
         {
             _httpContextAccessor.HttpContext.Session.SetString(GetSessionStorageKey(key), value);
         }
 
+        /// <summary>
+        /// Saves int in session storage.
+        /// </summary>
+        /// <param name="key">Key name.</param>
+        /// <param name="value">The value to store for the key.</param>
         public void SaveIntInSession(SessionStorageKey key, int value)
         {
             _httpContextAccessor.HttpContext.Session.SetInt32(GetSessionStorageKey(key), value);
         }
 
+        /// <summary>
+        /// Read string from session storage.
+        /// </summary>
+        /// <param name="key">The key to read.</param>
         public string? GetFromSession(SessionStorageKey key)
         {
             return _httpContextAccessor.HttpContext.Session.GetString(GetSessionStorageKey(key));
         }
 
+        /// <summary>
+        /// Read int from session storage.
+        /// </summary>
+        /// <param name="key">The key to read.</param>
         public int? GetIntFromSession(SessionStorageKey key)
         {
             return _httpContextAccessor.HttpContext.Session.GetInt32(GetSessionStorageKey(key));
         }
 
+        /// <summary>
+        /// Clear session storage and deletes cookies.
+        /// </summary>
+        /// <returns></returns>
         public async Task SignOut()
         {
             _httpContextAccessor.HttpContext.Session.Clear();
@@ -77,6 +129,11 @@ namespace Assignment_Wt1_Oauth.Utils
             await _httpContextAccessor.HttpContext.SignOutAsync();
         }
 
+        /// <summary>
+        /// Saves token-data in session and creates auth-cookie.
+        /// </summary>
+        /// <param name="tokenResponse">Wrapper model for the oauth token response, to read the id_token from.</param>
+        /// <returns></returns>
         public async Task SignIn(OauthTokenResponse? tokenResponse)
         {
             if (tokenResponse != null)

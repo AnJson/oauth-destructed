@@ -9,12 +9,32 @@ using System.Text.Json;
 
 namespace Assignment_Wt1_Oauth.Utils
 {
+    /// <summary>
+    /// Handles sending http-requests.
+    /// </summary>
     public class RequestHandler : IRequestHandler
     {
+        /// <summary>
+        /// Injected service.
+        /// </summary>
         private readonly IConfiguration _configuration;
+
+        /// <summary>
+        /// Injected service.
+        /// </summary>
         private readonly ISessionHandler _sessionHandler;
+
+        /// <summary>
+        /// Injected service.
+        /// </summary>
         private readonly HttpClient _httpClient;
 
+        /// <summary>
+        /// Constructor recieving injected services.
+        /// </summary>
+        /// <param name="configuration">Service to inject.</param>
+        /// <param name="httpClient">Service to inject.</param>
+        /// <param name="sessionHandler">Service to inject.</param>
         public RequestHandler (IConfiguration configuration, HttpClient httpClient, ISessionHandler sessionHandler)
         {
             _configuration = configuration;
@@ -22,6 +42,12 @@ namespace Assignment_Wt1_Oauth.Utils
             _sessionHandler = sessionHandler;
         }
 
+        /// <summary>
+        /// Constructs and sends request to fetch oauth token.
+        /// </summary>
+        /// <param name="options">Wrapper model for the token request options.</param>
+        /// <returns>Wrapper model for the token-response.</returns>
+        /// <exception cref="Exception">If request is not successfull.</exception>
         public async Task<OauthTokenResponse?> getTokenRequest(OauthTokenRequest options)
         {
             // Transform OauthTokenRequest to enumerable keyvaluepair.
@@ -42,6 +68,12 @@ namespace Assignment_Wt1_Oauth.Utils
             return JsonSerializer.Deserialize<OauthTokenResponse>(responseContent);
         }
 
+        /// <summary>
+        /// Constructs and sends request to refresh oauth token.
+        /// </summary>
+        /// <param name="options">Wrapper model for the token request options.</param>
+        /// <returns>Wrapper model for the token-response.</returns>
+        /// <exception cref="Exception">If request is not successfull.</exception>
         public async Task<OauthTokenResponse?> getTokenRequest(OauthRefreshTokenRequest options)
         {
             // Transform OauthTokenRequest to enumerable keyvaluepair.
@@ -62,6 +94,11 @@ namespace Assignment_Wt1_Oauth.Utils
             return JsonSerializer.Deserialize<OauthTokenResponse>(responseContent);
         }
 
+        /// <summary>
+        /// Constructs and sends request for user profile.
+        /// </summary>
+        /// <returns>Wrapper model for profile-response.</returns>
+        /// <exception cref="Exception">If not successful request.</exception>
         public async Task<UserProfile?> getUserProfile()
         {
             string accessKey = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.ACCESS_TOKEN);
@@ -79,6 +116,11 @@ namespace Assignment_Wt1_Oauth.Utils
             return JsonSerializer.Deserialize<UserProfile>(responseContent);
         }
 
+        /// <summary>
+        /// Constructs and sends GraphQL request for groups and projects.
+        /// </summary>
+        /// <returns>Wrapper model for the GraphQL response.</returns>
+        /// <exception cref="Exception">If not successful request.</exception>
         public async Task<GraphQLGroupsResponse?> getGroups()
         {
             string accessKey = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.ACCESS_TOKEN);
@@ -102,6 +144,12 @@ namespace Assignment_Wt1_Oauth.Utils
             return JsonSerializer.Deserialize<GraphQLGroupsResponse>(responseContent);
         }
 
+        /// <summary>
+        /// Constructs and sends the number of requests needed to fetch requested number of activities.
+        /// </summary>
+        /// <param name="requestedActivities">Number of activities to fetch.</param>
+        /// <returns>Wrapper model for the activities response.</returns>
+        /// <exception cref="Exception">If not successful request.</exception>
         public async Task<UserActivities> getActivites(int requestedActivities)
         {
             string accessKey = _sessionHandler.GetFromSession(SessionHandler.SessionStorageKey.ACCESS_TOKEN);

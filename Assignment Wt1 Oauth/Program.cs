@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 {
-    // Services
+    // Scope to handle services, setting up services in the IoC-container and adding authentication.
     builder.Services
         .AddSingleton<HttpClient>()
         .AddScoped<IUserService, UserService>()
@@ -52,6 +52,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
+// Middlewares to run in the request-pipeline.
 if (builder.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
