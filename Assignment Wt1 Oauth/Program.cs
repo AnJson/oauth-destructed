@@ -2,6 +2,7 @@ using Assignment_Wt1_Oauth.Contracts;
 using Assignment_Wt1_Oauth.Services;
 using Assignment_Wt1_Oauth.Utils;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -23,7 +24,6 @@ var builder = WebApplication.CreateBuilder(args);
         {
             options.LoginPath = "/";
             options.AccessDeniedPath = "/denied";
-            options.Cookie.Name = builder.Configuration.GetValue<string>("AuthCookie");
             options.ExpireTimeSpan = TimeSpan.FromDays(7);
             options.SlidingExpiration = true;
             options.Cookie.HttpOnly = true;
@@ -42,7 +42,6 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddSession(options =>
     {
-        options.Cookie.Name = builder.Configuration.GetValue<string>("SessionCookie");
         options.Cookie.HttpOnly = true;
         options.Cookie.IsEssential = true;
     });
@@ -53,16 +52,20 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
 // Middlewares to run in the request-pipeline.
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
 if (builder.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 } else
 {
     app.UseExceptionHandler("/Error");
-    app.UseHsts();
+    // app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
 app.UseStatusCodePagesWithReExecute("/Error", "?statusCode={0}");
 app.UseAuthentication();
 app.UseAuthorization();
